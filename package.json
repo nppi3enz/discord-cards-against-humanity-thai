@@ -1,0 +1,32 @@
+{
+  "name": "discord-cards-against-humanity",
+  "version": "0.0.1",
+  "description": "A Cards Against Humanity game for Discord.",
+  "main": "./src/app.js",
+  "scripts": {
+    "test": "jest --watchAll",
+    "dev": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greencoast-studios/discord-cards-against-humanity.git"
+  },
+  "author": "Greencoast Studios",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/greencoast-studios/discord-cards-against-humanity/issues"
+  },
+  "homepage": "https://github.com/greencoast-studios/discord-cards-against-humanity#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "discord.js": "github:discordjs/discord.js",
+    "events": "^3.0.0",
+    "fs-extra": "^8.1.0",
+    "logger": "github:moonstar-x/logger",
+    "node-opus": "^0.3.2"
+  },
+  "devDependencies": {
+    "jest": "^24.8.0",
+    "nodemon": "^1.19.1"
+  }
+}
