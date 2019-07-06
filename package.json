@@ -5,7 +5,9 @@
   "main": "./src/app.js",
   "scripts": {
     "test": "jest --watchAll",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "start": "node ./src/app.js",
+    "debug": "node ./src/app.js --debug"
   },
   "repository": {
     "type": "git",
