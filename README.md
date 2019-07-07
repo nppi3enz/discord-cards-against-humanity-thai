@@ -10,6 +10,8 @@ To self-host this bot you'll need the following:
 * [git](https://git-scm.com/)
 * [node.js](https://nodejs.org/en/)
 
+For developers, the project has an ESLint rules file, to use this on VSCode, it is required to have the [ESLint Extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
+
 ## Installation
 
 In order to self-host this bot, first you'll need to clone this repository.
@@ -35,6 +37,10 @@ For development, run the following command:
 For running tests, run:
 
     npm test
+
+To view debug messages, run:
+
+    npm run debug
 
 ## Authors
 
