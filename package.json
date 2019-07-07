@@ -1,0 +1,40 @@
+{
+  "name": "discord-cards-against-humanity",
+  "version": "0.0.1",
+  "description": "A Cards Against Humanity game for Discord.",
+  "main": "./src/app.js",
+  "scripts": {
+    "test": "jest --watchAll",
+    "dev": "nodemon",
+    "start": "node ./src/app.js",
+    "debug": "node ./src/app.js --debug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greencoast-studios/discord-cards-against-humanity.git"
+  },
+  "author": "Greencoast Studios",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/greencoast-studios/discord-cards-against-humanity/issues"
+  },
+  "homepage": "https://github.com/greencoast-studios/discord-cards-against-humanity#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "discord.js": "github:discordjs/discord.js",
+    "events": "^3.0.0",
+    "fs-extra": "^8.1.0",
+    "logger": "github:moonstar-x/logger",
+    "node-opus": "^0.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^6.0.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "jest": "^24.8.0",
+    "nodemon": "^1.19.1"
+  }
+}
