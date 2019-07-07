@@ -4,4 +4,4 @@ module.exports = {
   execute(message, options) {
     message.reply('Pong!');
   }
-}
+};

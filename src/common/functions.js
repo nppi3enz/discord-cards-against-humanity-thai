@@ -8,13 +8,13 @@ const updatePresence = (client) => {
       name: presence,
       type: 'PLAYING'
     }
-  }).then( () => {
-    logger.info(`Presence updated to: ${presence}`)
-  }).catch( (err) => {
+  }).then(() => {
+    logger.info(`Presence updated to: ${presence}`);
+  }).catch((err) => {
     logger.error(err);
   });
-}
+};
 
 module.exports = {
   updatePresence
-}
+};
