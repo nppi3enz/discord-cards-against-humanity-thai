@@ -1,0 +1,15 @@
+/*
+  Properties:
+    name: <String> The name of the command, it should be the same as the filename without its extension.
+    description: <String> A brief description on how to use the command. This message is displayed when issuing the help command.
+*/
+
+module.exports = {
+  name: '',
+  description: '',
+  execute(message, options) {
+
+    // Command code goes here.
+    
+  }
+}

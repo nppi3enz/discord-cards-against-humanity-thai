@@ -9,7 +9,29 @@ const handleReady = (client) => {
 }
 
 const handleMessage = (message, client) => {
-  
+  if (!message.content.startsWith(prefix) || message.author.bot) {
+    return;
+  }
+
+  const args = message.content.slice(prefix.length).trim().split(/ +/);
+  const command = args.shift().toLowerCase();
+
+  if (!client.commands.has(command)) {
+    return;
+  }
+
+  const options = {
+    args,
+    commands: client.commands
+  }
+
+  try {
+    logger.info(`User ${message.member.displayName} issued command ${command} in guild ${message.guild.name}.`);
+    client.commands.get(command).execute(message, options);
+  } catch (err) {
+    logger.error(err);
+    message.reply("there's been a problem executing your command.");
+  }
 }
 
 const handleGuildCreate = (guild) => {

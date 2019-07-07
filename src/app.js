@@ -1,8 +1,16 @@
-const { Client } = require('discord.js');
+const { Client, Collection } = require('discord.js');
+const fs = require('fs-extra');
 const appHandlers = require('./events/handlers/app');
 const config = require('../config/settings.json');
 
 const client = new Client();
+
+client.commands = new Collection();
+const commandFiles = fs.readdirSync(__dirname + '/commands').filter(file => file.endsWith('.js'));
+for (const file of commandFiles) {
+  const command = require(`./commands/${file}`);
+  client.commands.set(command.name, command);
+}
 
 client.on('ready', () => appHandlers.handleReady(client));
 client.on('message', message => appHandlers.handleMessage(message, client));
