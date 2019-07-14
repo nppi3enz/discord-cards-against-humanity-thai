@@ -1,5 +1,6 @@
 const { Logger } = require('logger');
 const { updatePresence } = require('../../common/functions');
+const utils = require('../../utils');
 const { prefix } = require('../../../config/settings.json');
 const logger = new Logger();
 
@@ -16,22 +17,12 @@ const handleMessage = (message, client) => {
   const args = message.content.slice(prefix.length).trim().split(/ +/);
   const command = args.shift().toLowerCase();
 
-  if (!client.commands.has(command)) {
-    return;
-  }
-
   const options = {
     args,
     commands: client.commands
   };
 
-  try {
-    logger.info(`User ${message.member.displayName} issued command ${command} in guild ${message.guild.name}.`);
-    client.commands.get(command).execute(message, options);
-  } catch (err) {
-    logger.error(err);
-    message.reply("there's been a problem executing your command.");
-  }
+  utils.commands.executeCommand(client, message, options, command);
 };
 
 const handleGuildCreate = (guild) => {
