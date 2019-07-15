@@ -10,6 +10,9 @@
       "ignoreReadBeforeAssign": false
     }],
     "space-before-blocks": "error",
-    "space-before-function-paren": "off"
+    "space-before-function-paren": "off",
+  },
+  "env": {
+    "jest": true
   }
 }
