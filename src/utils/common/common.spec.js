@@ -1,7 +1,7 @@
-const { splitForMessageEmbedField } = require('./index');
+const { splitForMessageEmbedField, parseArgs } = require('.');
 const { MAX_EMBED_FIELD_SIZE } = require('../../common/constants');
 
-describe('Utils: Common Methods', () => {
+describe('Utils: splitForMessageEmbedField()', () => {
   test('should return an array.', () => {
     const actualResult = splitForMessageEmbedField();
     expect(actualResult).toBeInstanceOf(Array);
@@ -42,5 +42,38 @@ describe('Utils: Common Methods', () => {
     const actualResult = splitForMessageEmbedField(stringArray).join('');
     const expectedResult = stringArray.join('');
     expect(actualResult).toBe(expectedResult);
+  });
+});
+
+describe('Utils: parseArgs()', () => {
+  test('should return an object.', () => {
+    const actualResult = parseArgs();
+    expect(actualResult).toBeInstanceOf(Object);
+  });
+
+  describe('Object properties:', () => {
+    test('should return an object with a subCommand property.', () => {
+      const actualResult = parseArgs(['sub']);
+      expect(actualResult).toMatchObject({
+        ...actualResult,
+        subCommand: 'sub'
+      });
+    });
+
+    test('should return a null subCommand property when an empty array is passed.', () => {
+      const actualResult = parseArgs([]);
+      expect(actualResult).toMatchObject({
+        ...actualResult,
+        subCommand: null
+      });
+    });
+
+    test('should return an object with a argsList property.', () => {
+      const actualResult = parseArgs(['sub', 'list1', 'list2']);
+      expect(actualResult).toMatchObject({
+        subCommand: 'sub',
+        argsList: ['list1', 'list2']
+      });
+    });
   });
 });

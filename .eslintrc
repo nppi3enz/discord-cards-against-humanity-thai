@@ -43,5 +43,8 @@
   },
   "env": {
     "jest": true
+  },
+  "globals": {
+    "logger": "readonly"
   }
 }

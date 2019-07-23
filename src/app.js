@@ -4,6 +4,7 @@ const path = require('path');
 const appHandlers = require('./events/handlers/app');
 const constants = require('./common/constants');
 const config = require('../config/settings.json');
+require('./common/globals');
 
 const client = new Client();
 client.commands = {};

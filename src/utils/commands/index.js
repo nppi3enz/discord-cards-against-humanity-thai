@@ -1,6 +1,11 @@
-const { Logger } = require('logger');
-const logger = new Logger();
-
+/**
+ * Validates the command run by an user and returns an object containing the required information
+ * that the bot needs to run the actual command.
+ * @param {Discord.Client} client The client instance of the bot.
+ * @param {Discord.Message} message The message object that triggered this method.
+ * @param {String} command The name of the command being run.
+ * @returns {Object} The object containing the validated info on the command.
+ */
 const validateCommand = (client, message, command) => {
   const validatedInfo = {
     type: null,
@@ -29,6 +34,14 @@ const validateCommand = (client, message, command) => {
   return validatedInfo;
 };
 
+/**
+ * Executes the specified command.
+ * @param {Discord.Client} client The client instance of the bot.
+ * @param {Discord.Message} message The message object that triggered this method.
+ * @param {Object} options The object containing the data that the command may need.
+ * @param {String} command The name of the command being run.
+ * @returns {void}
+ */
 const executeCommand = (client, message, options, command) => {
   const { author, type, origin } = validateCommand(client, message, command);
 
