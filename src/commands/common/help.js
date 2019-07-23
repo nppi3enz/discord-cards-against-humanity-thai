@@ -38,6 +38,7 @@ module.exports = {
     for (let i = 0; i < splittedMessage.length; i++) {
       embed.addField(`Page ${i + 1}:`, splittedMessage[i]);
     }
+    embed.addField(`Request a feature? Found a bug?`, `Please report it to our **[Github Issues Page](https://github.com/greencoast-studios/discord-cards-against-humanity/issues)** so that our team can work on it.`);
 
     message.channel.send(embed);
   }
