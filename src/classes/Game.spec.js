@@ -9,7 +9,7 @@ const GuildMemberMock = {
 };
 
 const usernames = [
-  'moonstar-x',
+  'cody',
   'tanb01',
   'minimabu',
   'Rest In Pizzeria',
@@ -159,6 +159,46 @@ describe('Classes: Game', () => {
     expect(game.players.length).toEqual(1);
   });
 
-  // TO DO:
-  // Test private methods
+  test('should remove a player from the game.', () => {
+    const gamemaster = GuildMemberMock;
+    const game = new Game(gamemaster);
+    const newMember = createGuildMemberMock();
+    game.addPlayer(new Player(newMember));
+    const removePlayer = game._removePlayer(game.players[0], 0);
+    expect(removePlayer).toEqual(true);
+  });
+
+  test('should choose a random player in the game.', () => {
+    const gamemaster = GuildMemberMock;
+    const game = new Game(gamemaster);
+    for (let i = 0; i < 2; i++) {
+      const newMember = createGuildMemberMock();
+      game.addPlayer(newMember);
+    }
+    const aRandomPlayer = game._chooseRandomPlayer();
+    expect(aRandomPlayer).toBeInstanceOf(Player);
+  });
+
+  test('should find player and index by name.', () => {
+    const gamemaster = GuildMemberMock;
+    const game = new Game(gamemaster);
+    const gamemasterInfo = game._findPlayerByName(gamemaster.displayName);
+    expect(gamemasterInfo.playerIndex).toBeLessThan(game.players.length);
+    expect(gamemasterInfo.player).toMatchObject(game.players[0]);
+  });
+
+  test('should find player and index by id.', () => {
+    const gamemaster = GuildMemberMock;
+    const game = new Game(gamemaster);
+    const gamemasterInfo = game._findPlayerById(gamemaster.id);
+    expect(gamemasterInfo.playerIndex).toBeLessThan(game.players.length);
+    expect(gamemasterInfo.player).toMatchObject(game.players[0]);
+  });
+
+  test('should verify player is in the list.', () => {
+    const gamemaster = GuildMemberMock;
+    const game = new Game(gamemaster);
+    const isPlayerInList = game._isPlayerInList(gamemaster);
+    expect(isPlayerInList).toEqual(true);
+  });
 });
