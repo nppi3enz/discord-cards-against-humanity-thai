@@ -163,7 +163,7 @@ describe('Classes: Game', () => {
     const gamemaster = GuildMemberMock;
     const game = new Game(gamemaster);
     const newMember = createGuildMemberMock();
-    game.addPlayer(new Player(newMember));
+    game.addPlayer(newMember);
     const removePlayer = game._removePlayer(game.players[0], 0);
     expect(removePlayer).toEqual(true);
   });
