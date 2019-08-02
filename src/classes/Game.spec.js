@@ -5,8 +5,28 @@ const { GAME_STATUS } = require('../common/constants');
 
 const GuildMemberMock = {
   displayName: 'moonstar-x',
-  id: 69
+  id: 3000
 };
+
+const usernames = [
+  'moonstar-x',
+  'tanb01',
+  'minimabu',
+  'Rest In Pizzeria',
+  'papishampu'
+];
+
+let incrementalId = 1;
+function createGuildMemberMock() {
+  const user = usernames[Math.floor(Math.random() * usernames.length)];
+  const id = incrementalId;
+  incrementalId++;
+
+  return {
+    displayName: user,
+    id
+  }
+}
 
 describe('Classes: Game', () => {
   test('should create a Game instance.', () => {
@@ -86,4 +106,60 @@ describe('Classes: Game', () => {
     expect(spy.calledOnce).toEqual(true);
     expect(spy.calledWithExactly(arg1, arg2, arg3)).toEqual(true);
   });
+
+  test('should add players to player list.', () => {
+    const game = new Game(GuildMemberMock);
+    const newMember1 = createGuildMemberMock();
+    game.addPlayer(newMember1);
+    expect(game.players.length).toEqual(2);
+    const newMember2 = createGuildMemberMock();
+    game.addPlayer(newMember2);
+    expect(game.players.length).toEqual(3);
+    for (const player of game.players) {
+      expect(player).toBeInstanceOf(Player);
+    }
+  });
+
+  test('should throw if player added is already in list.', () => {
+    const game = new Game(GuildMemberMock);
+    const newMember = createGuildMemberMock();
+    game.addPlayer(newMember);
+    expect(() => game.addPlayer(newMember)).toThrow();
+  });
+
+  test('should kick players by name.', () => {
+    const gamemaster = GuildMemberMock;
+    const game = new Game(gamemaster);
+    let players = [];
+    for (let i = 0; i < 2; i++) {
+      const newMember = createGuildMemberMock();
+      players.push(new Player(newMember));
+      game.addPlayer(newMember);
+    }
+    expect(game.players.length).toEqual(3);
+    game.kickPlayer(players[0].name);
+    expect(game.players.length).toEqual(2);
+    game.kickPlayer(players[1].name);
+    expect(game.players.length).toEqual(1);
+  });
+
+  test('should remove players that leave the game.', () => {
+    const gamemaster = GuildMemberMock;
+    const game = new Game(gamemaster);
+    let players = [];
+    for (let i = 0; i < 2; i++) {
+      const newMember = createGuildMemberMock();
+      players.push(new Player(newMember));
+      game.addPlayer(newMember);
+    }
+    expect(game.players.length).toEqual(3);
+    game.leavePlayer(players[0].id);
+    expect(game.players.length).toEqual(2);
+    game.leavePlayer(players[1].id);
+    expect(game.players.length).toEqual(1);
+  });
+
+  // TO DO:
+  // Test private methods
+  
 });
