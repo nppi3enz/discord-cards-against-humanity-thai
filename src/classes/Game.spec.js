@@ -25,7 +25,7 @@ function createGuildMemberMock() {
   return {
     displayName: user,
     id
-  }
+  };
 }
 
 describe('Classes: Game', () => {
@@ -130,7 +130,7 @@ describe('Classes: Game', () => {
   test('should kick players by name.', () => {
     const gamemaster = GuildMemberMock;
     const game = new Game(gamemaster);
-    let players = [];
+    const players = [];
     for (let i = 0; i < 2; i++) {
       const newMember = createGuildMemberMock();
       players.push(new Player(newMember));
@@ -146,7 +146,7 @@ describe('Classes: Game', () => {
   test('should remove players that leave the game.', () => {
     const gamemaster = GuildMemberMock;
     const game = new Game(gamemaster);
-    let players = [];
+    const players = [];
     for (let i = 0; i < 2; i++) {
       const newMember = createGuildMemberMock();
       players.push(new Player(newMember));
@@ -161,5 +161,4 @@ describe('Classes: Game', () => {
 
   // TO DO:
   // Test private methods
-  
 });
