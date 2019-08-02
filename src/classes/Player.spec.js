@@ -6,6 +6,11 @@ const GuildMemberMock = {
 };
 
 describe('Classes: Player', () => {
+  test('should create a player instance.', () => {
+    const player = new Player(GuildMemberMock);
+    expect(player).toBeInstanceOf(Player);
+  });
+
   test('should get name.', () => {
     const player = new Player(GuildMemberMock);
     expect(player.name).toEqual(GuildMemberMock.displayName);
