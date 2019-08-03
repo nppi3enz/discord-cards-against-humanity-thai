@@ -171,8 +171,10 @@ describe('Classes: Game', () => {
       const game = new Game(gamemaster);
       const newMember = createGuildMemberMock();
       game.addPlayer(newMember);
-      const removePlayer = game._removePlayerFromGame(game.players[0], 0);
-      expect(removePlayer).toEqual(true);
+      const playerRemoved = game._removePlayerFromGame(game.players[0], 0); // here we removed the gamemaster.
+      expect(playerRemoved).toEqual(true);
+      expect(game.players.length).toEqual(1);
+      expect(game.gamemaster).toBeInstanceOf(Player);
     });
 
     test('should choose a random player in the game.', () => {
@@ -186,27 +188,29 @@ describe('Classes: Game', () => {
       expect(aRandomPlayer).toBeInstanceOf(Player);
     });
 
-    test('should find player and index by name.', () => {
+    test('should find player and player list index by name.', () => {
       const gamemaster = GuildMemberMock;
       const game = new Game(gamemaster);
-      const gamemasterInfo = game._findPlayerByName(gamemaster.displayName);
-      expect(gamemasterInfo.playerIndex).toBeLessThan(game.players.length);
-      expect(gamemasterInfo.player).toMatchObject(game.players[0]);
+      const foundGamemasterObject = game._findPlayerByName(gamemaster.displayName);
+      expect(foundGamemasterObject.playerIndex).toBeGreaterThan(-1); // a -1 or lower means the player was not found.
+      expect(foundGamemasterObject.player).toMatchObject(game.gamemaster);
     });
 
-    test('should find player and index by id.', () => {
+    test('should find player and player list index by id.', () => {
       const gamemaster = GuildMemberMock;
       const game = new Game(gamemaster);
-      const gamemasterInfo = game._findPlayerById(gamemaster.id);
-      expect(gamemasterInfo.playerIndex).toBeLessThan(game.players.length);
-      expect(gamemasterInfo.player).toMatchObject(game.players[0]);
+      const foundGamemasterObject = game._findPlayerById(gamemaster.id);
+      expect(foundGamemasterObject.playerIndex).toBeGreaterThan(-1);
+      expect(foundGamemasterObject.player).toMatchObject(game.gamemaster);
     });
 
-    test('should verify player is in the list.', () => {
+    test('should verify if player is in the list.', () => {
       const gamemaster = GuildMemberMock;
       const game = new Game(gamemaster);
-      const isPlayerInList = game._isPlayerInList(gamemaster);
-      expect(isPlayerInList).toEqual(true);
+      const isGamemasterInList = game._isPlayerInList(gamemaster);
+      expect(isGamemasterInList).toEqual(true);
+      const randomPlayer = new Player(createGuildMemberMock());
+      expect(game._isPlayerInList(randomPlayer)).toEqual(false);
     });
   });
 });
