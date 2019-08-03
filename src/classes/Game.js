@@ -25,7 +25,7 @@ class Game extends EventEmitter {
     }
 
     this._players.push(newPlayer);
-    return true;
+    return newPlayer;
   }
 
   removePlayer(playerId) {
@@ -43,7 +43,7 @@ class Game extends EventEmitter {
       throw new Error('Player is not in-game!');
     }
 
-    this._players.splice(index, 1);
+    const [removedPlayer] = this._players.splice(index, 1);
 
     if (player.isGamemaster) {
       const newGamemaster = this._chooseRandomPlayer();
@@ -51,7 +51,7 @@ class Game extends EventEmitter {
       this._gamemaster = newGamemaster;
     }
 
-    return true;
+    return removedPlayer;
   }
 
   _chooseRandomPlayer() {

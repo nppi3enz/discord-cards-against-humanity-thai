@@ -112,17 +112,19 @@ describe('Classes: Game', () => {
   });
 
   describe('Public Methods:', () => {
-    test('should add players to player list.', () => {
+    test('should add players to player list and return the player object.', () => {
       const game = new Game(GuildMemberMock);
       const newMember1 = createGuildMemberMock();
-      game.addPlayer(newMember1);
+      const addedPlayer1 = game.addPlayer(newMember1);
       expect(game.players.length).toEqual(2);
       const newMember2 = createGuildMemberMock();
-      game.addPlayer(newMember2);
+      const addedPlayer2 = game.addPlayer(newMember2);
       expect(game.players.length).toEqual(3);
       for (const player of game.players) {
         expect(player).toBeInstanceOf(Player);
       }
+      expect(addedPlayer1).toBeInstanceOf(Player);
+      expect(addedPlayer2).toBeInstanceOf(Player);
     });
 
     test('should throw if player added is already in list.', () => {
@@ -166,13 +168,26 @@ describe('Classes: Game', () => {
   });
 
   describe('Private Methods:', () => {
-    test('should remove a player from the game.', () => {
+    test('should remove player from the game and return this player.', () => {
+      const game = new Game(GuildMemberMock);
+      const newMember = createGuildMemberMock();
+      const addedPlayer = game.addPlayer(newMember);
+      const playerIndex = 1;
+      const removedPlayer = game._removePlayerFromGame(game.players[playerIndex], playerIndex); // here we removed the gamemaster.
+      expect(removedPlayer).toBeInstanceOf(Player);
+      expect(removedPlayer.id).toEqual(addedPlayer.id);
+      expect(game.players.length).toEqual(1);
+    });
+
+    test('should reassign gamemaster if gamemaster is removed from the game.', () => {
       const gamemaster = GuildMemberMock;
       const game = new Game(gamemaster);
       const newMember = createGuildMemberMock();
+      const gamemasterPlayer = new Player(gamemaster, true);
       game.addPlayer(newMember);
-      const playerRemoved = game._removePlayerFromGame(game.players[0], 0); // here we removed the gamemaster.
-      expect(playerRemoved).toEqual(true);
+      const gamemasterIndex = 0;
+      const removedPlayer = game._removePlayerFromGame(game.players[gamemasterIndex], gamemasterIndex); // here we removed the gamemaster.
+      expect(removedPlayer.id).toEqual(gamemasterPlayer.id);
       expect(game.players.length).toEqual(1);
       expect(game.gamemaster).toBeInstanceOf(Player);
     });
