@@ -28,17 +28,17 @@ class Game extends EventEmitter {
     return true;
   }
 
-  leavePlayer(playerId) {
+  removePlayer(playerId) {
     const { player, playerIndex } = this._findPlayerById(playerId);
-    return this._removePlayer(player, playerIndex);
+    return this._removePlayerFromGame(player, playerIndex);
   }
 
   kickPlayer(playerName) {
     const { player, playerIndex } = this._findPlayerByName(playerName);
-    return this._removePlayer(player, playerIndex);
+    return this._removePlayerFromGame(player, playerIndex);
   }
 
-  _removePlayer(player, index) {
+  _removePlayerFromGame(player, index) {
     if (index < 0) {
       throw new Error('Player is not in-game!');
     }
