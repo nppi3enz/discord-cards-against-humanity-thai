@@ -3,9 +3,15 @@ const Game = require('./Game');
 const Player = require('./Player');
 const { GAME_STATUS } = require('../common/constants');
 
+const GuildMock = {
+  name: 'My Server',
+  id: 172937192
+};
+
 const GuildMemberMock = {
   displayName: 'moonstar-x',
-  id: 3000
+  id: 3000,
+  guild: GuildMock
 };
 
 const usernames = [
@@ -24,7 +30,8 @@ function createGuildMemberMock() {
 
   return {
     displayName: user,
-    id
+    id,
+    guild: GuildMock
   };
 }
 
@@ -83,6 +90,19 @@ describe('Classes: Game', () => {
       game.status = newGameStatus;
       expect(game.status).toEqual(GAME_STATUS.preparing);
       expect(game.status).not.toEqual(newGameStatus);
+    });
+
+    test('should get game guild.', () => {
+      const game = new Game(GuildMemberMock);
+      expect(game.guild).toMatchObject(GuildMock);
+    });
+
+    test('should not set game guild.', () => {
+      const game = new Game(GuildMemberMock);
+      game.guild = 'new guild';
+      expect(game.guild).toMatchObject(GuildMock);
+      expect(game.guild).not.toBeInstanceOf(String);
+      expect(game.guild).toBeInstanceOf(Object);
     });
   });
 
@@ -164,6 +184,56 @@ describe('Classes: Game', () => {
       expect(game.players.length).toEqual(2);
       game.removePlayer(players[1].id);
       expect(game.players.length).toEqual(1);
+    });
+
+    test("should start game if there's 3 or more players, else an error should throw.", () => {
+      const game = new Game(GuildMemberMock);
+      const newMember = createGuildMemberMock();
+      game.addPlayer(newMember);
+      expect(() => game.start()).toThrow();
+      const newMember2 = createGuildMemberMock();
+      game.addPlayer(newMember2);
+      const gameStarted = game.start();
+      expect(() => gameStarted).not.toThrow();
+      expect(gameStarted).toEqual(true);
+    });
+
+    test('should change game status to playing if started.', () => {
+      const game = new Game(GuildMemberMock);
+      for (let i = 0; i < 2; i++) {
+        game.addPlayer(createGuildMemberMock());
+      }
+      game.start();
+      expect(game.status).toEqual(GAME_STATUS.playing);
+    });
+
+    test('should throw if trying to start an already on-going game.', () => {
+      const game = new Game(GuildMemberMock);
+      for (let i = 0; i < 2; i++) {
+        game.addPlayer(createGuildMemberMock());
+      }
+      game.start();
+      expect(() => game.start()).toThrow();
+    });
+
+    test("should throw if trying to end a game that hasn't been initiated.", () => {
+      const game = new Game(GuildMemberMock);
+      for (let i = 0; i < 2; i++) {
+        game.addPlayer(createGuildMemberMock());
+      }
+      expect(() => game.end()).toThrow();
+      game.start();
+      expect(game.end()).toEqual(true);
+    });
+
+    test('should change game status to finished if stopped.', () => {
+      const game = new Game(GuildMemberMock);
+      for (let i = 0; i < 2; i++) {
+        game.addPlayer(createGuildMemberMock());
+      }
+      game.start();
+      game.end();
+      expect(game.status).toEqual(GAME_STATUS.finished);
     });
   });
 

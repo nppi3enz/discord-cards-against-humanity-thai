@@ -11,6 +11,27 @@ class Game extends EventEmitter {
     this._gamemaster = initialPlayer;
     this._players = [initialPlayer];
     this._status = GAME_STATUS.preparing;
+    this._guild = initialMember.guild;
+  }
+
+  start() {
+    /* This method is still a wip because the actual game starting
+    process is not yet defined. */
+    this._validateBeforeStarting();
+
+    this._status = GAME_STATUS.playing;
+
+    return true;
+  }
+
+  end() {
+    /* This method is still a wip because the actual game ending
+    process is not yet defined. */
+    this._validateBeforeEnding();
+
+    this._status = GAME_STATUS.finished;
+
+    return true;
   }
 
   addPlayer(newMember) {
@@ -29,6 +50,9 @@ class Game extends EventEmitter {
   }
 
   removePlayer(playerId) {
+    /* If there's only one player left and this player is removed,
+    an event marking the end of the game should be emitted. */
+
     const { player, playerIndex } = this._findPlayerById(playerId);
     return this._removePlayerFromGame(player, playerIndex);
   }
@@ -36,6 +60,22 @@ class Game extends EventEmitter {
   kickPlayer(playerName) {
     const { player, playerIndex } = this._findPlayerByName(playerName);
     return this._removePlayerFromGame(player, playerIndex);
+  }
+
+  _validateBeforeStarting() {
+    if (this._players.length < 3) {
+      throw new Error('Game can only be started with at least 3 players!');
+    }
+
+    if (this._status === GAME_STATUS.playing) {
+      throw new Error('Game is already on-going!');
+    }
+  }
+
+  _validateBeforeEnding() {
+    if (this.status !== GAME_STATUS.playing) {
+      throw new Error('Game has not been started!');
+    }
   }
 
   _removePlayerFromGame(player, index) {
@@ -105,6 +145,10 @@ class Game extends EventEmitter {
 
   get status() {
     return this._status;
+  }
+
+  get guild() {
+    return this._guild;
   }
 }
 
