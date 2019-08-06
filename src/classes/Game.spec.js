@@ -2,6 +2,7 @@ const sinon = require('sinon');
 const Game = require('./Game');
 const Player = require('./Player');
 const { GAME_STATUS } = require('../common/constants');
+const { GameStatusError, PlayerError, GameRequirementsError } = require('./Errors');
 
 const GuildMock = {
   name: 'My Server',
@@ -147,11 +148,11 @@ describe('Classes: Game', () => {
       expect(addedPlayer2).toBeInstanceOf(Player);
     });
 
-    test('should throw if player added is already in list.', () => {
+    test('should throw a PlayerError if player added is already in list.', () => {
       const game = new Game(GuildMemberMock);
       const newMember = createGuildMemberMock();
       game.addPlayer(newMember);
-      expect(() => game.addPlayer(newMember)).toThrow();
+      expect(() => game.addPlayer(newMember)).toThrow(PlayerError);
     });
 
     test('should kick players by name.', () => {
@@ -186,11 +187,11 @@ describe('Classes: Game', () => {
       expect(game.players.length).toEqual(1);
     });
 
-    test("should start game if there's 3 or more players, else an error should throw.", () => {
+    test("should start game if there's 3 or more players, else a GameRequirementsError should throw.", () => {
       const game = new Game(GuildMemberMock);
       const newMember = createGuildMemberMock();
       game.addPlayer(newMember);
-      expect(() => game.start()).toThrow();
+      expect(() => game.start()).toThrow(GameRequirementsError);
       const newMember2 = createGuildMemberMock();
       game.addPlayer(newMember2);
       const gameStarted = game.start();
@@ -207,21 +208,21 @@ describe('Classes: Game', () => {
       expect(game.status).toEqual(GAME_STATUS.playing);
     });
 
-    test('should throw if trying to start an already on-going game.', () => {
+    test('should throw a GameStatusError if trying to start an already on-going game.', () => {
       const game = new Game(GuildMemberMock);
       for (let i = 0; i < 2; i++) {
         game.addPlayer(createGuildMemberMock());
       }
       game.start();
-      expect(() => game.start()).toThrow();
+      expect(() => game.start()).toThrow(GameStatusError);
     });
 
-    test("should throw if trying to end a game that hasn't been initiated.", () => {
+    test("should throw a GameStatusError if trying to end a game that hasn't been initiated.", () => {
       const game = new Game(GuildMemberMock);
       for (let i = 0; i < 2; i++) {
         game.addPlayer(createGuildMemberMock());
       }
-      expect(() => game.end()).toThrow();
+      expect(() => game.end()).toThrow(GameStatusError);
       game.start();
       expect(game.end()).toEqual(true);
     });

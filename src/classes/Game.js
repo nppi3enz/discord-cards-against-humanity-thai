@@ -1,6 +1,7 @@
 const { GAME_STATUS } = require('../common/constants');
 const Player = require('./Player');
 const EventEmitter = require('events');
+const { GameStatusError, PlayerError, GameRequirementsError } = require('./Errors');
 
 class Game extends EventEmitter {
   constructor(initialMember) {
@@ -42,7 +43,7 @@ class Game extends EventEmitter {
     const newPlayer = new Player(newMember);
 
     if (this._isPlayerInList(newPlayer)) {
-      throw new Error('Player is already in-game!');
+      throw new PlayerError('Player is already in-game!');
     }
 
     this._players.push(newPlayer);
@@ -64,23 +65,23 @@ class Game extends EventEmitter {
 
   _validateBeforeStarting() {
     if (this._players.length < 3) {
-      throw new Error('Game can only be started with at least 3 players!');
+      throw new GameRequirementsError('Game can only be started with at least 3 players!');
     }
 
     if (this._status === GAME_STATUS.playing) {
-      throw new Error('Game is already on-going!');
+      throw new GameStatusError('Game is already on-going!');
     }
   }
 
   _validateBeforeEnding() {
     if (this.status !== GAME_STATUS.playing) {
-      throw new Error('Game has not been started!');
+      throw new GameStatusError('Game has not been started!');
     }
   }
 
   _removePlayerFromGame(player, index) {
     if (index < 0) {
-      throw new Error('Player is not in-game!');
+      throw new PlayerError('Player is not in-game!');
     }
 
     const [removedPlayer] = this._players.splice(index, 1);
