@@ -1,6 +1,6 @@
 const { updatePresence } = require('../../common/functions');
 const utils = require('../../utils');
-const { prefix } = require('../../../config/settings.json');
+const { prefix } = getConfig();
 
 const handleReady = (client) => {
   logger.info('Connected to Discord! - Ready.');

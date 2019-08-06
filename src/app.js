@@ -1,10 +1,10 @@
+require('./common/globals');
 const { Client, Collection } = require('discord.js');
 const fs = require('fs-extra');
 const path = require('path');
 const appHandlers = require('./events/handlers/app');
 const constants = require('./common/constants');
-const config = require('../config/settings.json');
-require('./common/globals');
+const config = getConfig();
 
 const client = new Client();
 client.commands = {};

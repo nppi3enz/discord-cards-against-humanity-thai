@@ -45,6 +45,7 @@
     "jest": true
   },
   "globals": {
-    "logger": "readonly"
+    "logger": "readonly",
+    "getConfig": "readonly",
   }
 }

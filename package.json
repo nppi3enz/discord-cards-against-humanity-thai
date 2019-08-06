@@ -5,14 +5,16 @@
   "main": "./src/app.js",
   "scripts": {
     "test": "jest --watchAll",
+    "test:once": "jest",
     "dev": "nodemon",
     "start": "node ./src/app.js",
     "debug": "node ./src/app.js --debug",
-    "eslint:errors-only": "npx eslint src --quiet"
+    "eslint:errors-only": "eslint src --quiet"
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm run eslint:errors-only"
+      "pre-commit": "npm run eslint:errors-only",
+      "pre-push": "npm run eslint:errors-only && npm run test:once"
     }
   },
   "repository": {

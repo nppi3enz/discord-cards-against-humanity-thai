@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const { prefix } = require('../../../config/settings.json');
+const { prefix } = getConfig();
 const utils = require('../../utils');
 const { MESSAGE_EMBED_COLOR, MESSAGE_EMBED_HELP_THUMBNAIL } = require('../../common/constants');
 

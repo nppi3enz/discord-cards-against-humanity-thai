@@ -14,6 +14,8 @@ For developers, the project has an ESLint rules file, to use this on VSCode, it 
 
 ## Installation
 
+### Self-Hosting
+
 In order to self-host this bot, first you'll need to clone this repository.
 
     git clone https://github.com/greencoast-studios/discord-cards-against-humanity.git
@@ -28,15 +30,36 @@ And run the bot with:
 
     npm start
 
+### Heroku
+
+You can deploy this bot to Heroku by clicking the following image:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/greencoast-studios/discord-cards-against-humanity)
+
+You'll then need to add the config vars for your bot, head over to your app's *Dashboard*, click on *Settings* and *Reveal Config Vars*. You'll need to add the following vars with their respective values.
+
+| CONFIG VAR    | VALUE                        |
+|---------------|------------------------------|
+| PREFIX        | YOUR PREFIX HERE.            |
+| DISCORD_TOKEN | YOUR DISCORD BOT TOKEN HERE. |
+
+*Copy the config var exactly as it is and only change the values.*
+
+You can now go back to your app's *Overview*, make sure you disable the *web* dyno and enable the *bot* dyno. Your bot should now be up and running. Remember you can always check your bot's console if you access the *View Logs* in the *More* dropdown menu.
+
 ## Usage
 
 For development, run the following command:
 
     npm run dev
 
-For running tests, run:
+For running continuous tests, run:
 
     npm test
+
+For running tests once, run:
+
+    npm run test:once
 
 To view debug messages, run:
 
