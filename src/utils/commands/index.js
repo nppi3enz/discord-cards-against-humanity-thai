@@ -59,5 +59,6 @@ const executeCommand = (client, message, options, command) => {
 };
 
 module.exports = {
+  validateCommand,
   executeCommand
 };

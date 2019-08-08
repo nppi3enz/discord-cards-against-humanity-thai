@@ -4,8 +4,10 @@
   "description": "A Cards Against Humanity game for Discord.",
   "main": "./src/app.js",
   "scripts": {
-    "test": "jest --watchAll",
-    "test:once": "jest",
+    "test": "jest --watchAll --silent",
+    "test:showlogs": "jest --watchAll",
+    "test:once": "jest --silent",
+    "test:once-showlogs": "jest",
     "dev": "nodemon",
     "start": "node ./src/app.js",
     "debug": "node ./src/app.js --debug",

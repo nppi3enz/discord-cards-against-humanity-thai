@@ -2,10 +2,6 @@ const axios = require('axios');
 const { EXPANSION_PACK_TYPES } = require('../common/constants');
 
 const CAH_API_URL = 'https://cah.greencoaststudios.com/api/v1/';
-const HTTP_STATUS_CODES = {
-  NOT_FOUND: 404,
-  SERVER_ERROR: 500
-};
 
 function getPackListByType(expansionType, callback) {
   axios.get(CAH_API_URL + expansionType)
@@ -13,23 +9,16 @@ function getPackListByType(expansionType, callback) {
       callback(data);
     })
     .catch((error) => {
-      const { status, data } = error;
-      const expansionTypeName = EXPANSION_PACK_TYPES[expansionType];
+      const { response: { status, data } } = error;
+      const expansion = EXPANSION_PACK_TYPES[expansionType];
       const errorInfo = {
+        ...data,
         status,
-        data
+        expansion
       };
 
-      switch (errorInfo.status) {
-      case HTTP_STATUS_CODES.NOT_FOUND:
-        errorInfo.message = `The expansion type **${expansionTypeName}** was not found!`;
-        break;
-      case HTTP_STATUS_CODES.SERVER_ERROR:
-        errorInfo.message = `There was a server error when trying to retrieve the **${expansionTypeName}** expansion type!`;
-        break;
-      default:
-        errorInfo.message = `An unknown error happened when trying to retrieve the **${expansionTypeName}** expansion type!`;
-        break;
+      if (!data.status) {
+        errorInfo.message = `An unknown error happened when trying to retrieve the **${expansionType}** expansion type!`; // Not handled by API.
       }
 
       logger.error(error);
