@@ -8,6 +8,7 @@ const config = getConfig();
 
 const client = new Client();
 client.commands = {};
+const games = {};
 
 function loadCommands(type) {
   client.commands[type] = new Collection();
@@ -23,7 +24,7 @@ for (const type of constants.COMMAND_TYPES) {
 }
 
 client.on('ready', () => appHandlers.handleReady(client));
-client.on('message', message => appHandlers.handleMessage(message, client));
+client.on('message', message => appHandlers.handleMessage(message, client, games));
 client.on('guildCreate', guild => appHandlers.handleGuildCreate(guild));
 client.on('guildDelete', guild => appHandlers.handleGuildDelete(guild));
 client.on('guildUnavailable', guild => appHandlers.handleGuildUnavailable(guild));

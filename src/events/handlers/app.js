@@ -7,7 +7,7 @@ const handleReady = (client) => {
   updatePresence(client);
 };
 
-const handleMessage = (message, client) => {
+const handleMessage = (message, client, games) => {
   if (!message.content.startsWith(prefix) || message.author.bot) {
     return;
   }
@@ -17,7 +17,8 @@ const handleMessage = (message, client) => {
 
   const options = {
     args,
-    commands: client.commands
+    commands: client.commands,
+    games
   };
 
   utils.commands.executeCommand(client, message, options, command);
