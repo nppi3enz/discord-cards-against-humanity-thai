@@ -86,10 +86,12 @@ describe('Classes: Player', () => {
   });
 
   describe('Public Methods:', () => {
-    test('should increment score by 1.', () => {
-      const player = new Player(GuildMemberMock);
-      const score = player.incrementScore();
-      expect(score).toEqual(player.score);
+    describe('incrementScore()', () => {
+      test('should increment score by 1.', () => {
+        const player = new Player(GuildMemberMock);
+        const score = player.incrementScore();
+        expect(score).toEqual(player.score);
+      });
     });
   });
 });

@@ -1,5 +1,27 @@
-const { splitForMessageEmbedField, parseArgs } = require('.');
+const { splitForMessageEmbedField, parseArgs, parseChannelMention } = require('.');
 const { MAX_EMBED_FIELD_SIZE } = require('../../common/constants');
+
+const voiceChannelMock = {
+  id: '123',
+  type: 'voice',
+  viewable: true,
+  joinable: false
+};
+
+const textChannelMock = {
+  id: '234',
+  type: 'text',
+  viewable: false
+};
+
+const messageMock = {
+  guild: {
+    channels: [
+      textChannelMock,
+      voiceChannelMock
+    ]
+  }
+};
 
 describe('Utils: Common', () => {
   describe('splitForMessageEmbedField()', () => {
@@ -76,6 +98,60 @@ describe('Utils: Common', () => {
           argsList: ['list1', 'list2']
         });
       });
+    });
+  });
+
+  describe('parseChannelMention()', () => {
+    test('should return an object with at least an "exists" property.', () => {
+      const actualResult = parseChannelMention(messageMock);
+      expect(actualResult).toBeInstanceOf(Object);
+      expect(actualResult).toHaveProperty('exists');
+      expect(typeof actualResult.exists).toBe('boolean');
+    });
+
+    test('should return a false exists property if channelString has no numbers.', () => {
+      const actualResult = parseChannelMention(messageMock, 'aslkjasl', () => {
+        expect(actualResult.exists).toBe(false);
+      });
+    });
+
+    test('should return a false exists property if channel is not found.', () => {
+      const fakeChannelId = '62816382';
+      const actualResult = parseChannelMention(messageMock, fakeChannelId);
+      expect(actualResult.exists).toBe(false);
+    });
+
+    test('should return an object with the channel info if found.', () => {
+      const voiceChannelId = '123';
+      const actualResult = parseChannelMention(messageMock, voiceChannelId);
+      expect(actualResult).toBeInstanceOf(Object);
+      expect(actualResult).toHaveProperty('exists', true);
+      expect(actualResult).toHaveProperty('type', voiceChannelMock.type);
+      expect(actualResult).toHaveProperty('viewable', voiceChannelMock.viewable);
+      expect(actualResult).toHaveProperty('joinable', voiceChannelMock.joinable);
+      expect(actualResult).toHaveProperty('channel', voiceChannelMock);
+    });
+
+    test('should return an object with a null joinable property if channel is of type text.', () => {
+      const textChannelId = '234';
+      const actualResult = parseChannelMention(messageMock, textChannelId);
+      expect(actualResult).toBeInstanceOf(Object);
+      expect(actualResult).toHaveProperty('exists', true);
+      expect(actualResult).toHaveProperty('type', textChannelMock.type);
+      expect(actualResult).toHaveProperty('viewable', textChannelMock.viewable);
+      expect(actualResult).toHaveProperty('joinable', null);
+      expect(actualResult).toHaveProperty('channel', textChannelMock);
+    });
+
+    test('should return the proper channel info object if the id is surrounded by other characters.', () => {
+      const voiceChannelId = '<@123>'; // The stringified mention looks a bit like this.
+      const actualResult = parseChannelMention(messageMock, voiceChannelId);
+      expect(actualResult).toBeInstanceOf(Object);
+      expect(actualResult).toHaveProperty('exists', true);
+      expect(actualResult).toHaveProperty('type', voiceChannelMock.type);
+      expect(actualResult).toHaveProperty('viewable', voiceChannelMock.viewable);
+      expect(actualResult).toHaveProperty('joinable', voiceChannelMock.joinable);
+      expect(actualResult).toHaveProperty('channel', voiceChannelMock);
     });
   });
 });

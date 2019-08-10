@@ -133,170 +133,190 @@ describe('Classes: Game', () => {
   });
 
   describe('Public Methods:', () => {
-    test('should add players to player list and return the player object.', () => {
-      const game = new Game(GuildMemberMock);
-      const newMember1 = createGuildMemberMock();
-      const addedPlayer1 = game.addPlayer(newMember1);
-      expect(game.players.length).toEqual(2);
-      const newMember2 = createGuildMemberMock();
-      const addedPlayer2 = game.addPlayer(newMember2);
-      expect(game.players.length).toEqual(3);
-      for (const player of game.players) {
-        expect(player).toBeInstanceOf(Player);
-      }
-      expect(addedPlayer1).toBeInstanceOf(Player);
-      expect(addedPlayer2).toBeInstanceOf(Player);
-    });
+    describe('addPlayer()', () => {
+      test('should add players to player list and return the player object.', () => {
+        const game = new Game(GuildMemberMock);
+        const newMember1 = createGuildMemberMock();
+        const addedPlayer1 = game.addPlayer(newMember1);
+        expect(game.players.length).toEqual(2);
+        const newMember2 = createGuildMemberMock();
+        const addedPlayer2 = game.addPlayer(newMember2);
+        expect(game.players.length).toEqual(3);
+        for (const player of game.players) {
+          expect(player).toBeInstanceOf(Player);
+        }
+        expect(addedPlayer1).toBeInstanceOf(Player);
+        expect(addedPlayer2).toBeInstanceOf(Player);
+      });
 
-    test('should throw a PlayerError if player added is already in list.', () => {
-      const game = new Game(GuildMemberMock);
-      const newMember = createGuildMemberMock();
-      game.addPlayer(newMember);
-      expect(() => game.addPlayer(newMember)).toThrow(PlayerError);
-    });
-
-    test('should kick players by name.', () => {
-      const gamemaster = GuildMemberMock;
-      const game = new Game(gamemaster);
-      const players = [];
-      for (let i = 0; i < 2; i++) {
+      test('should throw a PlayerError if player added is already in list.', () => {
+        const game = new Game(GuildMemberMock);
         const newMember = createGuildMemberMock();
-        players.push(new Player(newMember));
         game.addPlayer(newMember);
-      }
-      expect(game.players.length).toEqual(3);
-      game.kickPlayer(players[0].name);
-      expect(game.players.length).toEqual(2);
-      game.kickPlayer(players[1].name);
-      expect(game.players.length).toEqual(1);
+        expect(() => game.addPlayer(newMember)).toThrow(PlayerError);
+      });
     });
 
-    test('should remove players that leave the game.', () => {
-      const gamemaster = GuildMemberMock;
-      const game = new Game(gamemaster);
-      const players = [];
-      for (let i = 0; i < 2; i++) {
+    describe('kickPlayer()', () => {
+      test('should kick players by name.', () => {
+        const gamemaster = GuildMemberMock;
+        const game = new Game(gamemaster);
+        const players = [];
+        for (let i = 0; i < 2; i++) {
+          const newMember = createGuildMemberMock();
+          players.push(new Player(newMember));
+          game.addPlayer(newMember);
+        }
+        expect(game.players.length).toEqual(3);
+        game.kickPlayer(players[0].name);
+        expect(game.players.length).toEqual(2);
+        game.kickPlayer(players[1].name);
+        expect(game.players.length).toEqual(1);
+      });
+    });
+
+    describe('removePlayer()', () => {
+      test('should remove players that leave the game.', () => {
+        const gamemaster = GuildMemberMock;
+        const game = new Game(gamemaster);
+        const players = [];
+        for (let i = 0; i < 2; i++) {
+          const newMember = createGuildMemberMock();
+          players.push(new Player(newMember));
+          game.addPlayer(newMember);
+        }
+        expect(game.players.length).toEqual(3);
+        game.removePlayer(players[0].id);
+        expect(game.players.length).toEqual(2);
+        game.removePlayer(players[1].id);
+        expect(game.players.length).toEqual(1);
+      });
+    });
+
+    describe('start()', () => {
+      test("should start game if there's 3 or more players, else a GameRequirementsError should throw.", () => {
+        const game = new Game(GuildMemberMock);
         const newMember = createGuildMemberMock();
-        players.push(new Player(newMember));
         game.addPlayer(newMember);
-      }
-      expect(game.players.length).toEqual(3);
-      game.removePlayer(players[0].id);
-      expect(game.players.length).toEqual(2);
-      game.removePlayer(players[1].id);
-      expect(game.players.length).toEqual(1);
+        expect(() => game.start()).toThrow(GameRequirementsError);
+        const newMember2 = createGuildMemberMock();
+        game.addPlayer(newMember2);
+        const gameStarted = game.start();
+        expect(() => gameStarted).not.toThrow();
+        expect(gameStarted).toEqual(true);
+      });
+
+      test('should change game status to playing if started.', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        game.start();
+        expect(game.status).toEqual(GAME_STATUS.playing);
+      });
+
+      test('should throw a GameStatusError if trying to start an already on-going game.', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        game.start();
+        expect(() => game.start()).toThrow(GameStatusError);
+      });
     });
 
-    test("should start game if there's 3 or more players, else a GameRequirementsError should throw.", () => {
-      const game = new Game(GuildMemberMock);
-      const newMember = createGuildMemberMock();
-      game.addPlayer(newMember);
-      expect(() => game.start()).toThrow(GameRequirementsError);
-      const newMember2 = createGuildMemberMock();
-      game.addPlayer(newMember2);
-      const gameStarted = game.start();
-      expect(() => gameStarted).not.toThrow();
-      expect(gameStarted).toEqual(true);
-    });
+    describe('end()', () => {
+      test("should throw a GameStatusError if trying to end a game that hasn't been initiated.", () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        expect(() => game.end()).toThrow(GameStatusError);
+        game.start();
+        expect(game.end()).toEqual(true);
+      });
 
-    test('should change game status to playing if started.', () => {
-      const game = new Game(GuildMemberMock);
-      for (let i = 0; i < 2; i++) {
-        game.addPlayer(createGuildMemberMock());
-      }
-      game.start();
-      expect(game.status).toEqual(GAME_STATUS.playing);
-    });
-
-    test('should throw a GameStatusError if trying to start an already on-going game.', () => {
-      const game = new Game(GuildMemberMock);
-      for (let i = 0; i < 2; i++) {
-        game.addPlayer(createGuildMemberMock());
-      }
-      game.start();
-      expect(() => game.start()).toThrow(GameStatusError);
-    });
-
-    test("should throw a GameStatusError if trying to end a game that hasn't been initiated.", () => {
-      const game = new Game(GuildMemberMock);
-      for (let i = 0; i < 2; i++) {
-        game.addPlayer(createGuildMemberMock());
-      }
-      expect(() => game.end()).toThrow(GameStatusError);
-      game.start();
-      expect(game.end()).toEqual(true);
-    });
-
-    test('should change game status to finished if stopped.', () => {
-      const game = new Game(GuildMemberMock);
-      for (let i = 0; i < 2; i++) {
-        game.addPlayer(createGuildMemberMock());
-      }
-      game.start();
-      game.end();
-      expect(game.status).toEqual(GAME_STATUS.finished);
+      test('should change game status to finished if stopped.', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        game.start();
+        game.end();
+        expect(game.status).toEqual(GAME_STATUS.finished);
+      });
     });
   });
 
   describe('Private Methods:', () => {
-    test('should remove player from the game and return this player.', () => {
-      const game = new Game(GuildMemberMock);
-      const newMember = createGuildMemberMock();
-      const addedPlayer = game.addPlayer(newMember);
-      const playerIndex = 1;
-      const removedPlayer = game._removePlayerFromGame(game.players[playerIndex], playerIndex); // here we removed the gamemaster.
-      expect(removedPlayer).toBeInstanceOf(Player);
-      expect(removedPlayer.id).toEqual(addedPlayer.id);
-      expect(game.players.length).toEqual(1);
-    });
-
-    test('should reassign gamemaster if gamemaster is removed from the game.', () => {
-      const gamemaster = GuildMemberMock;
-      const game = new Game(gamemaster);
-      const newMember = createGuildMemberMock();
-      const gamemasterPlayer = new Player(gamemaster, true);
-      game.addPlayer(newMember);
-      const gamemasterIndex = 0;
-      const removedPlayer = game._removePlayerFromGame(game.players[gamemasterIndex], gamemasterIndex); // here we removed the gamemaster.
-      expect(removedPlayer.id).toEqual(gamemasterPlayer.id);
-      expect(game.players.length).toEqual(1);
-      expect(game.gamemaster).toBeInstanceOf(Player);
-    });
-
-    test('should choose a random player in the game.', () => {
-      const gamemaster = GuildMemberMock;
-      const game = new Game(gamemaster);
-      for (let i = 0; i < 2; i++) {
+    describe('_removePlayerFromGame()', () => {
+      test('should remove player from the game and return this player.', () => {
+        const game = new Game(GuildMemberMock);
         const newMember = createGuildMemberMock();
+        const addedPlayer = game.addPlayer(newMember);
+        const playerIndex = 1;
+        const removedPlayer = game._removePlayerFromGame(game.players[playerIndex], playerIndex); // here we removed the gamemaster.
+        expect(removedPlayer).toBeInstanceOf(Player);
+        expect(removedPlayer.id).toEqual(addedPlayer.id);
+        expect(game.players.length).toEqual(1);
+      });
+
+      test('should reassign gamemaster if gamemaster is removed from the game.', () => {
+        const gamemaster = GuildMemberMock;
+        const game = new Game(gamemaster);
+        const newMember = createGuildMemberMock();
+        const gamemasterPlayer = new Player(gamemaster, true);
         game.addPlayer(newMember);
-      }
-      const aRandomPlayer = game._chooseRandomPlayer();
-      expect(aRandomPlayer).toBeInstanceOf(Player);
+        const gamemasterIndex = 0;
+        const removedPlayer = game._removePlayerFromGame(game.players[gamemasterIndex], gamemasterIndex); // here we removed the gamemaster.
+        expect(removedPlayer.id).toEqual(gamemasterPlayer.id);
+        expect(game.players.length).toEqual(1);
+        expect(game.gamemaster).toBeInstanceOf(Player);
+      });
     });
 
-    test('should find player and player list index by name.', () => {
-      const gamemaster = GuildMemberMock;
-      const game = new Game(gamemaster);
-      const foundGamemasterObject = game._findPlayerByName(gamemaster.displayName);
-      expect(foundGamemasterObject.playerIndex).toBeGreaterThan(-1); // a -1 or lower means the player was not found.
-      expect(foundGamemasterObject.player).toMatchObject(game.gamemaster);
+    describe('_chooseRandomPlayer()', () => {
+      test('should choose a random player in the game.', () => {
+        const gamemaster = GuildMemberMock;
+        const game = new Game(gamemaster);
+        for (let i = 0; i < 2; i++) {
+          const newMember = createGuildMemberMock();
+          game.addPlayer(newMember);
+        }
+        const aRandomPlayer = game._chooseRandomPlayer();
+        expect(aRandomPlayer).toBeInstanceOf(Player);
+      });
     });
 
-    test('should find player and player list index by id.', () => {
-      const gamemaster = GuildMemberMock;
-      const game = new Game(gamemaster);
-      const foundGamemasterObject = game._findPlayerById(gamemaster.id);
-      expect(foundGamemasterObject.playerIndex).toBeGreaterThan(-1);
-      expect(foundGamemasterObject.player).toMatchObject(game.gamemaster);
+    describe('_findPlayerByName()', () => {
+      test('should find player and player list index by name.', () => {
+        const gamemaster = GuildMemberMock;
+        const game = new Game(gamemaster);
+        const foundGamemasterObject = game._findPlayerByName(gamemaster.displayName);
+        expect(foundGamemasterObject.playerIndex).toBeGreaterThan(-1); // a -1 or lower means the player was not found.
+        expect(foundGamemasterObject.player).toMatchObject(game.gamemaster);
+      });
     });
 
-    test('should verify if player is in the list.', () => {
-      const gamemaster = GuildMemberMock;
-      const game = new Game(gamemaster);
-      const isGamemasterInList = game._isPlayerInList(gamemaster);
-      expect(isGamemasterInList).toEqual(true);
-      const randomPlayer = new Player(createGuildMemberMock());
-      expect(game._isPlayerInList(randomPlayer)).toEqual(false);
+    describe('_findPlayerById()', () => {
+      test('should find player and player list index by id.', () => {
+        const gamemaster = GuildMemberMock;
+        const game = new Game(gamemaster);
+        const foundGamemasterObject = game._findPlayerById(gamemaster.id);
+        expect(foundGamemasterObject.playerIndex).toBeGreaterThan(-1);
+        expect(foundGamemasterObject.player).toMatchObject(game.gamemaster);
+      });
+    });
+
+    describe('_isPlayerInList()', () => {
+      test('should verify if player is in the list.', () => {
+        const gamemaster = GuildMemberMock;
+        const game = new Game(gamemaster);
+        const isGamemasterInList = game._isPlayerInList(gamemaster);
+        expect(isGamemasterInList).toEqual(true);
+        const randomPlayer = new Player(createGuildMemberMock());
+        expect(game._isPlayerInList(randomPlayer)).toEqual(false);
+      });
     });
   });
 });
