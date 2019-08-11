@@ -4,6 +4,8 @@ const { prefix } = getConfig();
 module.exports = {
   name: 'start',
   description: 'A start command to start the game! To start a game you need at least 3 players.',
+  gamemasterOnly: false,
+  requiredGameStatus: null,
   execute(message, options) {
     const { channel } = message.member.voice;
 

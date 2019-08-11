@@ -6,6 +6,8 @@ const utils = require('../../utils/common');
 module.exports = {
   name: 'packs',
   description: 'Lists the packs that can be played.',
+  gamemasterOnly: false,
+  requiredGameStatus: null,
   execute(message, options) {
     for (const key in EXPANSION_PACK_TYPES) {
       const type = EXPANSION_PACK_TYPES[key];

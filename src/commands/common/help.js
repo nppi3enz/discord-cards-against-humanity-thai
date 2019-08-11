@@ -16,6 +16,8 @@ function processCommands(commands) {
 module.exports = {
   name: 'help',
   description: 'A help message to display all the commands available to the user.',
+  gamemasterOnly: false,
+  requiredGameStatus: null,
   execute(message, options) {
     let messageOrigin = null;
     let commandsCollection = null;

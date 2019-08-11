@@ -1,8 +1,9 @@
 module.exports = {
   name: 'dm',
-  description: 'A sample ping command. Should only work in DM.',
+  description: 'Added this for the sake of keeping the dm folder on git.',
+  gamemasterOnly: true,
+  requiredGameStatus: null,
   execute(message, options) {
-    logger.debug(message.author.game);
     message.reply('DM!');
   }
 };

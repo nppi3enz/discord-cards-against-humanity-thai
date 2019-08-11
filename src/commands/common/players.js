@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const { MESSAGE_EMBED_COLOR } = require('../../common/constants');
+const { MESSAGE_EMBED_COLOR, GAME_STATUS } = require('../../common/constants');
 
 const playerEmojis = [
   ':baby:',
@@ -28,17 +28,13 @@ function preparePlayerListMessage(players) {
 module.exports = {
   name: 'players',
   description: 'Show a list of the current players in-game.',
+  gamemasterOnly: false,
+  requiredGameStatus: GAME_STATUS.preparing || GAME_STATUS.playing,
   execute(message, options) {
-    const { game } = message.author;
-
-    if (!game) {
-      message.reply("there's no game currently being played.");
-      return;
-    }
-
-    const { players } = game;
+    const { players } = message.author.game;
     const playerList = preparePlayerListMessage(players);
     const numberOfPlayers = players.length;
+
     const fieldTitle = numberOfPlayers > 1
       ? `There are currently ${numberOfPlayers} players in-game!`
       : `There's currently ${numberOfPlayers} player in-game!`;

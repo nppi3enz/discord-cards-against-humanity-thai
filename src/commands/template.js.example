@@ -2,11 +2,15 @@
   Properties:
     name: <String> The name of the command, it should be the same as the filename without its extension.
     description: <String> A brief description on how to use the command. This message is displayed when issuing the help command.
+    gamemasterOnly: <Bool> Whether this command can only be run by a gamemaster or not.
+    requiredGameStatus: <enum|null> The state the game needs to be in to be able to run this command. Enum corresponds to GAME_STATUS in constants.
 */
 
 module.exports = {
   name: '',
   description: '',
+  gamemasterOnly: false,
+  requiredGameStatus: null,
   execute(message, options) {
 
     // Command code goes here.

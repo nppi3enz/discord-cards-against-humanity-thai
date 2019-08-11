@@ -1,10 +1,13 @@
-const { validateCommand, executeCommand } = require('.');
+const { validateCommand, executeCommand, validateRequiredGameStatus, validateGamemasterOnly } = require('.');
+const { GAME_STATUS } = require('../../common/constants');
 require('../../common/globals');
 
 class CommandMock {
-  constructor(name) {
+  constructor(name, gamemasterOnly = false, requiredGameStatus = null) {
     this.name = name;
     this.description = 'Command description.';
+    this.gamemasterOnly = gamemasterOnly;
+    this.requiredGameStatus = requiredGameStatus;
     this.execute = jest.fn();
   }
 }
@@ -51,14 +54,25 @@ const guildMessageMock = {
   member: {
     displayName: 'memberName'
   },
+  author: {
+    game: null
+  },
   reply: jest.fn()
 };
 const dmMessageMock = {
   author: {
-    username: 'username'
+    username: 'username',
+    game: null
   },
   reply: jest.fn()
 };
+
+const createGameMock = (status = GAME_STATUS.preparing) => ({
+  status,
+  gamemaster: {
+    id: '123'
+  }
+});
 
 describe('Utils: Commands', () => {
   describe('validateCommand()', () => {
@@ -109,6 +123,87 @@ describe('Utils: Commands', () => {
       expect(dmCommandFromGuild.type).toBeNull();
       const guildCommandFromDM = validateCommand(clientMock, dmMessageMock, guildCommandMock.name);
       expect(guildCommandFromDM.type).toBeNull();
+    });
+  });
+
+  describe('validateRequiredGameStatus()', () => {
+    test('should return a boolean.', () => {
+      const command = new CommandMock();
+      const validated = validateRequiredGameStatus(undefined, command);
+      expect(typeof validated).toBe('boolean');
+    });
+
+    test('should return true if required game status by command is null.', () => {
+      const noRequirementsCommand = new CommandMock('cmd');
+      const validated = validateRequiredGameStatus(createGameMock(), noRequirementsCommand);
+      expect(validated).toBe(true);
+    });
+
+    test('should return false if game parameter is undefined and a game status is required.', () => {
+      /* Undefined is specified here because this function will never omit
+      the game param. It may be undefined however if no game instance for a
+      certain guild does not exist. */
+      const requiringCommand = new CommandMock('name', false, GAME_STATUS.preparing);
+      const validated = validateRequiredGameStatus(undefined, requiringCommand);
+      expect(validated).toBe(false);
+    });
+
+    test('should return false if game status does not correspond to the game status required by the command.', () => {
+      const preparingCommand = new CommandMock('preparing', false, GAME_STATUS.preparing);
+      const playingCommand = new CommandMock('playing', false, GAME_STATUS.playing);
+      const preparingGame = createGameMock(GAME_STATUS.preparing);
+      const playingGame = createGameMock(GAME_STATUS.playing);
+      const validatePreparingCommand = validateRequiredGameStatus(playingGame, preparingCommand);
+      expect(validatePreparingCommand).toBe(false);
+      const validatePlayingCommand = validateRequiredGameStatus(preparingGame, playingCommand);
+      expect(validatePlayingCommand).toBe(false);
+    });
+
+    test('should return true if game status corresponds with the game status required by the command.', () => {
+      const preparingCommand = new CommandMock('preparing', false, GAME_STATUS.preparing);
+      const playingCommand = new CommandMock('playing', false, GAME_STATUS.playing);
+      const preparingGame = createGameMock(GAME_STATUS.preparing);
+      const playingGame = createGameMock(GAME_STATUS.playing);
+      const validatePreparingCommand = validateRequiredGameStatus(playingGame, playingCommand);
+      expect(validatePreparingCommand).toBe(true);
+      const validatePlayingCommand = validateRequiredGameStatus(preparingGame, preparingCommand);
+      expect(validatePlayingCommand).toBe(true);
+    });
+  });
+
+  describe('validateGamemasterOnly()', () => {
+    test('should return a boolean.', () => {
+      const game = createGameMock();
+      const command = new CommandMock('cmd');
+      const validation = validateGamemasterOnly(game, command);
+      expect(typeof validation).toBe('boolean');
+    });
+
+    test('should return true if command is not limited to gamemaster only.', () => {
+      const game = createGameMock();
+      const notGamemasterOnlyCommand = new CommandMock('cmd', false);
+      const validation = validateGamemasterOnly(game, notGamemasterOnlyCommand, '234');
+      expect(validation).toBe(true);
+    });
+
+    test('should return true if command is limited to gamemaster only and author is gamemaster.', () => {
+      const game = createGameMock();
+      const gamemasterOnlyCommand = new CommandMock('cmd', true);
+      const validation = validateGamemasterOnly(game, gamemasterOnlyCommand, '123');
+      expect(validation).toBe(true);
+    });
+
+    test("should return false if command is limited to gamemaster only and author isn't gamemaster.", () => {
+      const game = createGameMock();
+      const gamemasterOnlyCommand = new CommandMock('cmd', true);
+      const validation = validateGamemasterOnly(game, gamemasterOnlyCommand, '23124');
+      expect(validation).toBe(false);
+    });
+
+    test('should return false if command is limited to gamemaster only and no game is running.', () => {
+      const gamemasterOnlyCommand = new CommandMock('cmd', true);
+      const validation = validateGamemasterOnly(undefined, gamemasterOnlyCommand, '123');
+      expect(validation).toBe(false);
     });
   });
 
