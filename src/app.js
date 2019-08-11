@@ -1,14 +1,17 @@
 require('./common/globals');
-const { Client, Collection } = require('discord.js');
+const { Client, Collection, Structures } = require('discord.js');
+const { GameGuild, GameUser } = require('./classes/extensions');
 const fs = require('fs-extra');
 const path = require('path');
 const appHandlers = require('./events/handlers/app');
 const constants = require('./common/constants');
 const config = getConfig();
 
+Structures.extend('Guild', GameGuild);
+Structures.extend('User', GameUser);
+
 const client = new Client();
 client.commands = {};
-const games = {};
 
 function loadCommands(type) {
   client.commands[type] = new Collection();
@@ -24,7 +27,7 @@ for (const type of constants.COMMAND_TYPES) {
 }
 
 client.on('ready', () => appHandlers.handleReady(client));
-client.on('message', message => appHandlers.handleMessage(message, client, games));
+client.on('message', message => appHandlers.handleMessage(message, client));
 client.on('guildCreate', guild => appHandlers.handleGuildCreate(guild));
 client.on('guildDelete', guild => appHandlers.handleGuildDelete(guild));
 client.on('guildUnavailable', guild => appHandlers.handleGuildUnavailable(guild));

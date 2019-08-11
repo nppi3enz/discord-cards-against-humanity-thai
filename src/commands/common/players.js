@@ -29,7 +29,7 @@ module.exports = {
   name: 'players',
   description: 'Show a list of the current players in-game.',
   execute(message, options) {
-    const game = options.games[message.guild.id];
+    const { game } = message.author;
 
     if (!game) {
       message.reply("there's no game currently being played.");
