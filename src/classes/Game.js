@@ -64,6 +64,13 @@ class Game extends EventEmitter {
     return this._removePlayerFromGame(player, playerIndex);
   }
 
+  getPlayersLabel() {
+    /* The 10 here corresponds to the max number of players a game
+    can have. This value should be settable per guild and will be
+    saved in a config file. In the meantime, 10 is the hardcoded value. */
+    return `[${this._players.length}/10]`;
+  }
+
   broadcastToPlayers(message, playerNotToMessage = { id: null }) {
     for (const player of this._players) {
       if (player.id === playerNotToMessage.id) {

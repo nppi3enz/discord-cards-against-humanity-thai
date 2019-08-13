@@ -249,6 +249,31 @@ describe('Classes: Game', () => {
       });
     });
 
+    describe('getPlayersLabel()', () => {
+      test('should return a string.', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        game.start();
+        const label = game.getPlayersLabel();
+        expect(typeof label).toBe('string');
+      });
+
+      test('should return a label with the structure [playersInGame/maxPlayers].', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 4; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        game.start();
+        const label = game.getPlayersLabel();
+        expect(label).toBe('[5/10]');
+        game.removePlayer(3000);
+        const newLabel = game.getPlayersLabel();
+        expect(newLabel).toBe('[4/10]');
+      });
+    });
+
     describe('broadcastToPlayers()', () => {
       afterEach(() => {
         GuildMemberMock.send.mockClear();

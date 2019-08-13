@@ -19,7 +19,7 @@ function preparePlayerListMessage(players) {
 
   for (const player of players) {
     const playerEmoji = playerEmojis[Math.floor(Math.random() * playerEmojisLength)];
-    playerListString += `${playerEmoji} **${player.name} ${player.isGamemaster ? '(Gamemaster)' : ''}**`;
+    playerListString += `${playerEmoji} **${player.name} ${player.isGamemaster ? '(Gamemaster)' : ''}**\n`;
   }
 
   return playerListString;
@@ -31,13 +31,9 @@ module.exports = {
   gamemasterOnly: false,
   requiredGameStatus: GAME_STATUS.preparing || GAME_STATUS.playing,
   execute(message, options) {
-    const { players } = message.author.game;
-    const playerList = preparePlayerListMessage(players);
-    const numberOfPlayers = players.length;
-
-    const fieldTitle = numberOfPlayers > 1
-      ? `There are currently ${numberOfPlayers} players in-game!`
-      : `There's currently ${numberOfPlayers} player in-game!`;
+    const { game } = message.author;
+    const playerList = preparePlayerListMessage(game.players);
+    const fieldTitle = `Current players: ${game.getPlayersLabel()}`;
 
     const embed = new MessageEmbed()
       .setTitle('Player List')

@@ -1,32 +1,32 @@
-const { MESSAGE_EMBED_COLOR } = require('../../common/constants');
+const { MESSAGE_EMBED_COLOR, GAME_STATUS } = require('../../common/constants');
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {
   name: 'join',
   description: 'A join command to join the current game lobby!',
+  gamemasterOnly: false,
+  requiredGameStatus: GAME_STATUS.preparing,
   execute(message, options) {
     const { game } = message.guild;
-    if (!game) {
-      message.reply("there's no game currently being played.");
-      return;
-    }
+
     try {
       const newPlayer = game.addPlayer(message.member);
       message.author.game = game;
 
       game.broadcastToPlayers(`**${message.member.displayName}** has joined the game.`, newPlayer);
-      const currentNumberOfPlayers = game.players.length;
-      const maxNumberOfPlayers = 10;
       const playerNames = game.players.map(player => player.name).join(', ');
+      const playersLabel = game.getPlayersLabel();
 
       const embed = new MessageEmbed()
         .setColor(MESSAGE_EMBED_COLOR)
         .addField(`You have joined a game hosted by **${game.gamemaster.name}**.`, `The game is currently being set-up.
-        You have joined a game with ${playerNames}. (${currentNumberOfPlayers}/${maxNumberOfPlayers})`);
+        You have joined a game with ${playerNames}. ${playersLabel}`);
       message.member.send(embed);
     } catch (error) {
       if (error.name === 'GameStatusError' || error.name === 'GamePlayersError') {
         message.reply(error.message);
+      } else if (error.name === 'PlayerError') {
+        message.reply("you're already in-game!");
       } else {
         throw error;
       }
