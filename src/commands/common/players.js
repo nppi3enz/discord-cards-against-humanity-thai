@@ -31,7 +31,7 @@ module.exports = {
   gamemasterOnly: false,
   requiredGameStatus: GAME_STATUS.preparing || GAME_STATUS.playing,
   execute(message, options) {
-    const { game } = message.author;
+    const { game } = message.guild || message.author;
     const playerList = preparePlayerListMessage(game.players);
     const fieldTitle = `Current players: ${game.getPlayersLabel()}`;
 

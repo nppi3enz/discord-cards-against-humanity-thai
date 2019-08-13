@@ -308,6 +308,68 @@ describe('Classes: Game', () => {
         }
       });
     });
+
+    test('should get the scoreboard as an array of objects.', () => {
+      const game = new Game(GuildMemberMock);
+      for (let i = 0; i < 2; i++) {
+        game.addPlayer(createGuildMemberMock());
+      }
+      game.start();
+      const scoreboard = game.getScoreboard();
+      expect(scoreboard).toBeInstanceOf(Array);
+      for (const playerScore of scoreboard) {
+        expect(playerScore).toBeInstanceOf(Object);
+        expect(playerScore).toHaveProperty('name');
+        expect(playerScore).toHaveProperty('id');
+        expect(playerScore).toHaveProperty('score');
+        expect(typeof playerScore.name).toBe('string');
+        expect(typeof playerScore.score).toBe('number');
+      }
+    });
+
+    test('should throw a GameStatusError if trying to get the scoreboard in a non playing game.', () => {
+      const game = new Game(GuildMemberMock);
+      for (let i = 0; i < 2; i++) {
+        game.addPlayer(createGuildMemberMock());
+      }
+      expect(() => game.getScoreboard()).toThrow(GameStatusError);
+      game.start();
+      expect(() => game.getScoreboard()).not.toThrow();
+    });
+
+    test('should scoreboard length and player list length be equal.', () => {
+      const game = new Game(GuildMemberMock);
+      for (let i = 0; i < 2; i++) {
+        game.addPlayer(createGuildMemberMock());
+      }
+      game.start();
+      expect(game.getScoreboard().length).toBe(game.players.length);
+    });
+
+    test('should get scoreboard and correspond to the current score of each player.', () => {
+      const game = new Game(GuildMemberMock);
+      for (let i = 0; i < 2; i++) {
+        game.addPlayer(createGuildMemberMock());
+      }
+      game.start();
+      const initialScoreboard = game.getScoreboard();
+      for (const playerScore of initialScoreboard) {
+        expect(playerScore.score).toBe(0);
+        const foundPlayer = game._findPlayerById(playerScore.id).player;
+        expect(foundPlayer).toBeInstanceOf(Player);
+        expect(foundPlayer.name).toBe(playerScore.name);
+      }
+      for (let i = 0; i < game.players; i++) {
+        for (let j = 0; j < i + 1; j++) {
+          game.players[i].incrementScore();
+        }
+      }
+      const updatedScoreboard = game.getScoreboard();
+      for (const playerScore of updatedScoreboard) {
+        const foundPlayer = game._findPlayerById(playerScore.id).player;
+        expect(playerScore.score).toBe(foundPlayer.score);
+      }
+    });
   });
 
   describe('Private Methods:', () => {

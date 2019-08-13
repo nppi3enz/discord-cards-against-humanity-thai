@@ -64,6 +64,22 @@ class Game extends EventEmitter {
     return this._removePlayerFromGame(player, playerIndex);
   }
 
+  getScoreboard() {
+    if (this._status !== GAME_STATUS.playing) {
+      throw new GameStatusError('Game has not been started!');
+    }
+
+    const scoreboard = [];
+    for (const player of this._players) {
+      scoreboard.push({
+        name: player.name,
+        id: player.id,
+        score: player.score
+      });
+    }
+    return scoreboard;
+  }
+
   getPlayersLabel() {
     /* The 10 here corresponds to the max number of players a game
     can have. This value should be settable per guild and will be

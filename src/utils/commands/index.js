@@ -88,7 +88,9 @@ const executeCommand = (client, message, options, commandName) => {
   }
 
   const command = client.commands[type].get(commandName);
-  const { game, id: authorId } = message.guild || message.author;
+
+  const { id: authorId } = message.author;
+  const { game } = message.guild || message.author;
 
   const isGameStatusValidated = validateRequiredGameStatus(game, command);
   if (!isGameStatusValidated) {
