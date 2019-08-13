@@ -1,4 +1,4 @@
-const { GameError, GameStatusError, PlayerError, GameRequirementsError } = require('./Errors');
+const { GameError, GamePlayersError, GameStatusError, PlayerError, GameRequirementsError } = require('./Errors');
 
 describe('Classes: Errors', () => {
   describe('Classes: PlayerError', () => {
@@ -38,6 +38,26 @@ describe('Classes: Errors', () => {
     test('should contain a name equal to GameError.', () => {
       const error = new GameError();
       expect(error.name).toBe('GameError');
+    });
+  });
+
+  describe('Classes: GamePlayersError', () => {
+    test('should create a GamePlayersError instance.', () => {
+      const error = new GamePlayersError();
+      expect(error).toBeInstanceOf(GamePlayersError);
+    });
+
+    test('should contain a message.', () => {
+      const errorMessage = 'Something happened.';
+      const error = new GamePlayersError(errorMessage);
+      expect(error.message).toBe(errorMessage);
+      const emptyError = new GamePlayersError();
+      expect(emptyError.message).not.toBe(undefined);
+    });
+
+    test('should contain a name equal to GameError.', () => {
+      const error = new GamePlayersError();
+      expect(error.name).toBe('GamePlayersError');
     });
   });
 

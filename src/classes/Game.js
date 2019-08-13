@@ -1,7 +1,7 @@
 const { GAME_STATUS } = require('../common/constants');
 const Player = require('./Player');
 const EventEmitter = require('events');
-const { GameStatusError, PlayerError, GameRequirementsError } = require('./Errors');
+const { GameStatusError, GamePlayersError, PlayerError, GameRequirementsError } = require('./Errors');
 
 class Game extends EventEmitter {
   constructor(initialMember) {
@@ -39,6 +39,7 @@ class Game extends EventEmitter {
     /* There's a limit of players so there should be a check before adding
     However, this limit would be dependant on the guild.
     We still need to define how these guild settings are saved. */
+    this._validateBeforeAddingPlayer();
 
     const newPlayer = new Player(newMember);
 
@@ -63,6 +64,15 @@ class Game extends EventEmitter {
     return this._removePlayerFromGame(player, playerIndex);
   }
 
+  broadcastToPlayers(message, playerNotToMessage = { id: null }) {
+    for (const player of this._players) {
+      if (player.id === playerNotToMessage.id) {
+        continue;
+      }
+      player.member.send(message);
+    }
+  }
+
   _validateBeforeStarting() {
     if (this._players.length < 3) {
       throw new GameRequirementsError('Game can only be started with at least 3 players!');
@@ -76,6 +86,15 @@ class Game extends EventEmitter {
   _validateBeforeEnding() {
     if (this.status !== GAME_STATUS.playing) {
       throw new GameStatusError('Game has not been started!');
+    }
+  }
+
+  _validateBeforeAddingPlayer() {
+    if (this._status === GAME_STATUS.playing) {
+      throw new GameStatusError('Game is already on-going!');
+    }
+    if (this.players.length >= 10) {
+      throw new GamePlayersError('The game is full!');
     }
   }
 

@@ -20,6 +20,17 @@ class GameError extends Error {
   }
 }
 
+class GamePlayersError extends GameError {
+  constructor(message, ...args) {
+    super(message, args);
+
+    this.name = 'GamePlayersError';
+    this.message = message || 'No error message was specified.';
+
+    Error.captureStackTrace(this, GamePlayersError);
+  }
+}
+
 class GameStatusError extends GameError {
   constructor(message, ...args) {
     super(message, args);
@@ -43,6 +54,7 @@ class GameRequirementsError extends GameError {
 module.exports = {
   PlayerError,
   GameError,
+  GamePlayersError,
   GameStatusError,
   GameRequirementsError
 };

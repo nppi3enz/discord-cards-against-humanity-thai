@@ -12,7 +12,8 @@ const GuildMock = {
 const GuildMemberMock = {
   displayName: 'moonstar-x',
   id: 3000,
-  guild: GuildMock
+  guild: GuildMock,
+  send: jest.fn()
 };
 
 const usernames = [
@@ -32,7 +33,8 @@ function createGuildMemberMock() {
   return {
     displayName: user,
     id,
-    guild: GuildMock
+    guild: GuildMock,
+    send: jest.fn()
   };
 }
 
@@ -244,6 +246,41 @@ describe('Classes: Game', () => {
         game.start();
         game.end();
         expect(game.status).toEqual(GAME_STATUS.finished);
+      });
+    });
+
+    describe('broadcastToPlayers()', () => {
+      afterEach(() => {
+        GuildMemberMock.send.mockClear();
+      });
+
+      test('should send a message to all players in-game.', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        game.broadcastToPlayers('my message');
+        for (const player of game.players) {
+          expect(player.member.send.mock.calls.length).toBe(1);
+          expect(player.member.send.mock.calls).toEqual([['my message']]);
+        }
+      });
+
+      test('should send a message to all players in-game except to new player.', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        const newPlayer = game.addPlayer(createGuildMemberMock());
+        game.broadcastToPlayers('my message', newPlayer);
+        for (const player of game.players) {
+          if (newPlayer.id === player.id) {
+            expect(player.member.send.mock.calls.length).toBe(0);
+            continue;
+          }
+          expect(player.member.send.mock.calls.length).toBe(1);
+          expect(player.member.send.mock.calls).toEqual([['my message']]);
+        }
       });
     });
   });
