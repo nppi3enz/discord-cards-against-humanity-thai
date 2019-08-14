@@ -2,7 +2,7 @@ const sinon = require('sinon');
 const Game = require('./Game');
 const Player = require('./Player');
 const { GAME_STATUS } = require('../common/constants');
-const { GameStatusError, PlayerError, GameRequirementsError } = require('./Errors');
+const { GameStatusError, PlayerError, GameRequirementsError, GamePlayersError } = require('./Errors');
 
 const GuildMock = {
   name: 'My Server',
@@ -13,7 +13,10 @@ const GuildMemberMock = {
   displayName: 'moonstar-x',
   id: 3000,
   guild: GuildMock,
-  send: jest.fn()
+  send: jest.fn(),
+  user: {
+    game: 'game instance'
+  }
 };
 
 const usernames = [
@@ -34,7 +37,10 @@ function createGuildMemberMock() {
     displayName: user,
     id,
     guild: GuildMock,
-    send: jest.fn()
+    send: jest.fn(),
+    user: {
+      game: 'game instance'
+    }
   };
 }
 
@@ -174,6 +180,26 @@ describe('Classes: Game', () => {
         expect(game.players.length).toEqual(2);
         game.kickPlayer(players[1].name);
         expect(game.players.length).toEqual(1);
+      });
+
+      test('should throw a GamePlayersError if trying to kick the gamemaster.', () => {
+        const gamemaster = GuildMemberMock;
+        const game = new Game(gamemaster);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        expect(() => game.kickPlayer(gamemaster.displayName)).toThrow(GamePlayersError);
+      });
+
+      test('should send a message to kickedPlayer and remove its game reference.', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 3; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        const playerToKick = game.addPlayer(createGuildMemberMock());
+        const kickedPlayer = game.kickPlayer(playerToKick.name);
+        expect(kickedPlayer.member.send.mock.calls.length).toBe(1);
+        expect(kickedPlayer.member.user.game).toBeNull();
       });
     });
 
@@ -377,25 +403,54 @@ describe('Classes: Game', () => {
       test('should remove player from the game and return this player.', () => {
         const game = new Game(GuildMemberMock);
         const newMember = createGuildMemberMock();
+        for (let i = 0; i < 3; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
         const addedPlayer = game.addPlayer(newMember);
-        const playerIndex = 1;
-        const removedPlayer = game._removePlayerFromGame(game.players[playerIndex], playerIndex); // here we removed the gamemaster.
+        const playerIndex = game.players.length - 1;
+        const removedPlayer = game._removePlayerFromGame(game.players[playerIndex], playerIndex);
         expect(removedPlayer).toBeInstanceOf(Player);
         expect(removedPlayer.id).toEqual(addedPlayer.id);
-        expect(game.players.length).toEqual(1);
+        expect(game.players.length).toEqual(4);
       });
 
       test('should reassign gamemaster if gamemaster is removed from the game.', () => {
         const gamemaster = GuildMemberMock;
         const game = new Game(gamemaster);
-        const newMember = createGuildMemberMock();
         const gamemasterPlayer = new Player(gamemaster, true);
-        game.addPlayer(newMember);
+        for (let i = 0; i < 3; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
         const gamemasterIndex = 0;
         const removedPlayer = game._removePlayerFromGame(game.players[gamemasterIndex], gamemasterIndex); // here we removed the gamemaster.
         expect(removedPlayer.id).toEqual(gamemasterPlayer.id);
-        expect(game.players.length).toEqual(1);
+        expect(game.players.length).toEqual(3);
         expect(game.gamemaster).toBeInstanceOf(Player);
+      });
+
+      test('should end the game abruptly if game was being played and the resulting number of players is less than 3.', () => {
+        const gamemaster = GuildMemberMock;
+        const game = new Game(gamemaster);
+        game._endAbruptly = jest.fn();
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        game.start();
+        expect(game._endAbruptly.mock.calls.length).toBe(0);
+        game._removePlayerFromGame(game.players[1], 1);
+        expect(game._endAbruptly.mock.calls.length).toBe(1);
+      });
+
+      test('should not end the game abruptly if game was being prepared and the resulting number of players is less than 3.', () => {
+        const gamemaster = GuildMemberMock;
+        const game = new Game(gamemaster);
+        game._endAbruptly = jest.fn();
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        expect(game._endAbruptly.mock.calls.length).toBe(0);
+        game._removePlayerFromGame(game.players[1], 1);
+        expect(game._endAbruptly.mock.calls.length).toBe(0);
       });
     });
 

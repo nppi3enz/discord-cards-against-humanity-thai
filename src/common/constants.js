@@ -18,7 +18,8 @@ const EXPANSION_PACK_TYPES = {
 const GAME_STATUS = {
   preparing: 'PREPARING',
   playing: 'PLAYING',
-  finished: 'FINISHED'
+  finished: 'FINISHED',
+  any: 'ANY'
 };
 
 module.exports = {

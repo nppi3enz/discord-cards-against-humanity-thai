@@ -29,7 +29,7 @@ module.exports = {
   name: 'players',
   description: 'Show a list of the current players in-game.',
   gamemasterOnly: false,
-  requiredGameStatus: GAME_STATUS.preparing || GAME_STATUS.playing,
+  requiredGameStatus: GAME_STATUS.any,
   execute(message, options) {
     const { game } = message.guild || message.author;
     const playerList = preparePlayerListMessage(game.players);

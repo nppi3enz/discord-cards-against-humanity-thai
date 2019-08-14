@@ -61,7 +61,19 @@ class Game extends EventEmitter {
 
   kickPlayer(playerName) {
     const { player, playerIndex } = this._findPlayerByName(playerName);
-    return this._removePlayerFromGame(player, playerIndex);
+
+    if (player.id === this._gamemaster.id) {
+      throw new GamePlayersError('Kicking the gamemaster is not possible!');
+    }
+
+    const kickedPlayer = this._removePlayerFromGame(player, playerIndex);
+
+    if (kickedPlayer) {
+      kickedPlayer.member.user.game = null;
+      kickedPlayer.member.send('You have been kicked from the game!');
+    }
+
+    return kickedPlayer;
   }
 
   getScoreboard() {
@@ -121,12 +133,20 @@ class Game extends EventEmitter {
     }
   }
 
+  _endAbruptly() {
+    /* Implementation is yet to be decided. However it should return a falsey value. */
+  }
+
   _removePlayerFromGame(player, index) {
     if (index < 0) {
       throw new PlayerError('Player is not in-game!');
     }
 
     const [removedPlayer] = this._players.splice(index, 1);
+
+    if (this._status === GAME_STATUS.playing && this._players.length < 3) {
+      return this._endAbruptly();
+    }
 
     if (player.isGamemaster) {
       const newGamemaster = this._chooseRandomPlayer();

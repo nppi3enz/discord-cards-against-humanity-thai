@@ -169,6 +169,16 @@ describe('Utils: Commands', () => {
       const validatePlayingCommand = validateRequiredGameStatus(preparingGame, preparingCommand);
       expect(validatePlayingCommand).toBe(true);
     });
+
+    test('should return true if the required game status is any.', () => {
+      const anyCommand = new CommandMock('any', false, GAME_STATUS.any);
+      const preparingGame = createGameMock(GAME_STATUS.preparing);
+      const playingGame = createGameMock(GAME_STATUS.playing);
+      const validationForPreparingGame = validateRequiredGameStatus(preparingGame, anyCommand);
+      expect(validationForPreparingGame).toBe(true);
+      const validationForPlayingGame = validateRequiredGameStatus(playingGame, anyCommand);
+      expect(validationForPlayingGame).toBe(true);
+    });
   });
 
   describe('validateGamemasterOnly()', () => {

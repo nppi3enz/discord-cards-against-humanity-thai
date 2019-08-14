@@ -48,7 +48,7 @@ const validateRequiredGameStatus = (game, command) => {
     return true;
   }
 
-  if (!game || game.status !== requiredGameStatus) {
+  if (!game || (game.status !== requiredGameStatus && requiredGameStatus !== GAME_STATUS.any)) {
     return false;
   }
 
@@ -100,6 +100,9 @@ const executeCommand = (client, message, options, commandName) => {
       return;
     case GAME_STATUS.playing:
       message.reply('this command can only be run if the game is currently being played.');
+      return;
+    case GAME_STATUS.any:
+      message.reply('this command can only be run if there is a game running.');
       return;
     default:
       message.reply("something happened when trying to execute your command. Probably the command doesn't have the required game status set correctly.");
