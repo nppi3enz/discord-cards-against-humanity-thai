@@ -29,6 +29,18 @@ const POSITION_EMOJIS = [
   ':poop:'
 ];
 
+const PLAYER_EMOJIS = [
+  ':baby:',
+  ':boy:',
+  ':girl:',
+  ':man:',
+  ':woman:',
+  ':person_with_blond_hair:',
+  ':older_man:',
+  ':older_woman:',
+  ':man_with_gua_pi_mao:'
+];
+
 module.exports = {
   COMMAND_TYPES,
   MAX_EMBED_FIELD_SIZE,
@@ -36,5 +48,6 @@ module.exports = {
   MESSAGE_EMBED_HELP_THUMBNAIL,
   EXPANSION_PACK_TYPES,
   GAME_STATUS,
-  POSITION_EMOJIS
+  POSITION_EMOJIS,
+  PLAYER_EMOJIS
 };

@@ -1,24 +1,12 @@
 const { MessageEmbed } = require('discord.js');
-const { MESSAGE_EMBED_COLOR, GAME_STATUS } = require('../../common/constants');
-
-const playerEmojis = [
-  ':baby:',
-  ':boy:',
-  ':girl:',
-  ':man:',
-  ':woman:',
-  ':person_with_blond_hair:',
-  ':older_man:',
-  ':older_woman:',
-  ':man_with_gua_pi_mao:'
-];
+const { MESSAGE_EMBED_COLOR, GAME_STATUS, PLAYER_EMOJIS } = require('../../common/constants');
 
 function preparePlayerListMessage(players) {
   let playerListString = '';
-  const playerEmojisLength = playerEmojis.length;
+  const playerEmojisLength = PLAYER_EMOJIS.length;
 
   for (const player of players) {
-    const playerEmoji = playerEmojis[Math.floor(Math.random() * playerEmojisLength)];
+    const playerEmoji = PLAYER_EMOJIS[Math.floor(Math.random() * playerEmojisLength)];
     playerListString += `${playerEmoji} **${player.name} ${player.isGamemaster ? '(Gamemaster)' : ''}**\n`;
   }
 
