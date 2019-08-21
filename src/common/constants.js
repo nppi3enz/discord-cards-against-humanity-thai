@@ -22,11 +22,19 @@ const GAME_STATUS = {
   any: 'ANY'
 };
 
+const POSITION_EMOJIS = [
+  ':fire:',
+  ':star2:',
+  ':ok_hand:',
+  ':poop:'
+];
+
 module.exports = {
   COMMAND_TYPES,
   MAX_EMBED_FIELD_SIZE,
   MESSAGE_EMBED_COLOR,
   MESSAGE_EMBED_HELP_THUMBNAIL,
   EXPANSION_PACK_TYPES,
-  GAME_STATUS
+  GAME_STATUS,
+  POSITION_EMOJIS
 };

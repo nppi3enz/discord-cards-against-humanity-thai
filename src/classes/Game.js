@@ -1,6 +1,7 @@
 const { GAME_STATUS } = require('../common/constants');
 const Player = require('./Player');
 const EventEmitter = require('events');
+const { prepareScoreboardMessage } = require('../utils/game');
 const { GameStatusError, GamePlayersError, PlayerError, GameRequirementsError } = require('./Errors');
 
 class Game extends EventEmitter {
@@ -28,8 +29,18 @@ class Game extends EventEmitter {
   end() {
     /* This method is still a wip because the actual game ending
     process is not yet defined. */
-    this._validateBeforeEnding();
+    this._guild.game = null;
 
+    for (const player of this._players) {
+      player.member.user.game = null;
+    }
+    this.broadcastToPlayers(`Game has been stopped by gamemaster **${this._gamemaster.name}**`);
+
+    if (this._status === GAME_STATUS.playing) {
+      const scoreboard = this.getScoreboard();
+      const scoreboardMessage = prepareScoreboardMessage(scoreboard);
+      this.broadcastToPlayers(`The score is as follows: ${scoreboardMessage}`);
+    }
     this._status = GAME_STATUS.finished;
 
     return true;
@@ -115,12 +126,6 @@ class Game extends EventEmitter {
 
     if (this._status === GAME_STATUS.playing) {
       throw new GameStatusError('Game is already on-going!');
-    }
-  }
-
-  _validateBeforeEnding() {
-    if (this.status !== GAME_STATUS.playing) {
-      throw new GameStatusError('Game has not been started!');
     }
   }
 

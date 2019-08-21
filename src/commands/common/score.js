@@ -1,34 +1,6 @@
 const { MessageEmbed } = require('discord.js');
 const { MESSAGE_EMBED_COLOR, GAME_STATUS } = require('../../common/constants');
-
-const positionEmojis = [
-  ':fire:',
-  ':star2:',
-  ':ok_hand:',
-  ':poop:'
-];
-
-function prepareScoreboardMessage(scoreboard) {
-  let scoreboardString = '';
-  const lastPositionEmojiIndex = positionEmojis.length - 1;
-
-  const sortedScoreboard = scoreboard.sort((prev, cur) => {
-    if (prev.score < cur.score) {
-      return 1;
-    }
-    if (prev.score > cur.score) {
-      return -1;
-    }
-    return 0;
-  });
-
-  sortedScoreboard.forEach((playerScore, index) => {
-    const positionEmoji = positionEmojis[Math.min(index, lastPositionEmojiIndex)];
-    scoreboardString += `${positionEmoji} **${playerScore.name}** - ${playerScore.score} ${playerScore.score !== 1 ? 'points' : 'point'}.`;
-  });
-
-  return scoreboardString;
-}
+const { prepareScoreboardMessage } = require('../../utils/game');
 
 module.exports = {
   name: 'score',

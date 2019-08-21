@@ -254,14 +254,8 @@ describe('Classes: Game', () => {
     });
 
     describe('end()', () => {
-      test("should throw a GameStatusError if trying to end a game that hasn't been initiated.", () => {
-        const game = new Game(GuildMemberMock);
-        for (let i = 0; i < 2; i++) {
-          game.addPlayer(createGuildMemberMock());
-        }
-        expect(() => game.end()).toThrow(GameStatusError);
-        game.start();
-        expect(game.end()).toEqual(true);
+      beforeEach(() => {
+        GuildMemberMock.send.mockClear();
       });
 
       test('should change game status to finished if stopped.', () => {
@@ -272,6 +266,51 @@ describe('Classes: Game', () => {
         game.start();
         game.end();
         expect(game.status).toEqual(GAME_STATUS.finished);
+      });
+
+      test('should change game property of guild to null.', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        game.start();
+        game.end();
+        expect(game.guild.game).toBeNull();
+      });
+
+      test('should change each member game reference to null.', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        game.start();
+        game.end();
+        for (const player of game.players) {
+          expect(player.member.user.game).toBeNull();
+        }
+      });
+
+      test('should send a message to all players if game was being prepared.', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        game.end();
+        for (const player of game.players) {
+          expect(player.member.send.mock.calls.length).toBe(1);
+        }
+      });
+
+      test('should send message and scoreboard to all players if game was being played.', () => {
+        const game = new Game(GuildMemberMock);
+        for (let i = 0; i < 2; i++) {
+          game.addPlayer(createGuildMemberMock());
+        }
+        game.start();
+        game.end();
+        for (const player of game.players) {
+          expect(player.member.send.mock.calls.length).toBe(2);
+        }
       });
     });
 
@@ -301,7 +340,7 @@ describe('Classes: Game', () => {
     });
 
     describe('broadcastToPlayers()', () => {
-      afterEach(() => {
+      beforeEach(() => {
         GuildMemberMock.send.mockClear();
       });
 
