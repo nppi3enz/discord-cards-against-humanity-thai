@@ -1,6 +1,6 @@
 {
   "name": "discord-cards-against-humanity",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Cards Against Humanity game for Discord.",
   "main": "./src/app.js",
   "scripts": {
