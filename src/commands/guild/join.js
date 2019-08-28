@@ -14,7 +14,14 @@ module.exports = {
       message.author.game = game;
 
       game.broadcastToPlayers(`**${message.member.displayName}** has joined the game.`, newPlayer);
-      const playerNames = game.players.map(player => player.name).join(', ');
+
+      const playerNames = game.players.reduce((previousPlayerNames, currentPlayer) => {
+        if (currentPlayer.name !== newPlayer.name) {
+          previousPlayerNames.push(currentPlayer.name);
+        }
+        return previousPlayerNames;
+      }, []).join(', ');
+
       const playersLabel = game.getPlayersLabel();
 
       const embed = new MessageEmbed()
