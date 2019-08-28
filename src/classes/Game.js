@@ -11,6 +11,7 @@ class Game extends EventEmitter {
     const initialPlayer = new Player(initialMember, true);
 
     this._gamemaster = initialPlayer;
+    this._cardCzar = null;
     this._players = [initialPlayer];
     this._status = GAME_STATUS.preparing;
     this._guild = initialMember.guild;
@@ -153,18 +154,35 @@ class Game extends EventEmitter {
       return this._endAbruptly();
     }
 
-    if (player.isGamemaster) {
-      const newGamemaster = this._chooseRandomPlayer();
-      newGamemaster.isGamemaster = true;
-      this._gamemaster = newGamemaster;
-    }
+    this.broadcastToPlayers(`${player.name} has left the game.`);
 
+    if (this._players.length > 1) {
+      if (player.isGamemaster) {
+        const newGamemaster = this._chooseRandomPlayer();
+        newGamemaster.isGamemaster = true;
+        this._gamemaster = newGamemaster;
+        this.broadcastToPlayers(`**${this._gamemaster.name}** is the new Gamemaster.`);
+      }
+      /* Additionnally the round should be skipped */
+      if (player.isCardCzar) {
+        const newCardCzar = this._chooseRandomPlayer();
+        newCardCzar.isCardCzar = true;
+        this._cardCzar = newCardCzar;
+        this.broadcastToPlayers(`**${this._cardCzar.name}** is the new Card Czar.`);
+      }
+    }
     return removedPlayer;
   }
 
   _chooseRandomPlayer() {
     const randomIndex = Math.floor(Math.random() * this._players.length);
     return this._players[randomIndex];
+  }
+
+  _chooseACardCzar() {
+    const cardCzar = this._chooseRandomPlayer;
+    cardCzar.isCardCzar(true);
+    return cardCzar;
   }
 
   _findPlayerByName(playerName) {
@@ -205,6 +223,13 @@ class Game extends EventEmitter {
 
   get gamemaster() {
     return this._gamemaster;
+  }
+
+  get cardCzar() {
+    if (this._status === GAME_STATUS.playing) {
+      return this._cardCzar;
+    }
+    throw new GamePlayersError('Card Czar has not been choosen yet.');
   }
 
   get players() {

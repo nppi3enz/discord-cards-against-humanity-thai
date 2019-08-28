@@ -4,6 +4,7 @@ class Player {
     this._id = guildMember.id;
     this._member = guildMember;
     this._isGamemaster = isGamemaster;
+    this._isCardCzar = false;
     this._score = 0;
   }
 
@@ -16,6 +17,12 @@ class Player {
   set isGamemaster(newValue) {
     if (typeof newValue === 'boolean') {
       this._isGamemaster = newValue;
+    }
+  }
+
+  set isCardCzar(newValue) {
+    if (typeof newValue === 'boolean') {
+      this._isCardCzar = newValue;
     }
   }
 
@@ -33,6 +40,10 @@ class Player {
 
   get isGamemaster() {
     return this._isGamemaster;
+  }
+
+  get isCardCzar() {
+    return this._isCardCzar;
   }
 
   get score() {
