@@ -11,7 +11,6 @@ module.exports = {
 
     try {
       const newPlayer = game.addPlayer(message.member);
-      message.author.game = game;
 
       game.broadcastToPlayers(`**${message.member.displayName}** has joined the game.`, newPlayer);
 

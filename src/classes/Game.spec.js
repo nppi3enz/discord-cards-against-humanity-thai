@@ -6,7 +6,8 @@ const { GameStatusError, PlayerError, GameRequirementsError, GamePlayersError } 
 
 const GuildMock = {
   name: 'My Server',
-  id: 172937192
+  id: 172937192,
+  game: null
 };
 
 const GuildMemberMock = {
@@ -15,7 +16,7 @@ const GuildMemberMock = {
   guild: GuildMock,
   send: jest.fn(),
   user: {
-    game: 'game instance'
+    game: null
   }
 };
 
@@ -39,7 +40,7 @@ function createGuildMemberMock() {
     guild: GuildMock,
     send: jest.fn(),
     user: {
-      game: 'game instance'
+      game: null
     }
   };
 }
@@ -56,7 +57,7 @@ describe('Classes: Game', () => {
       expect(game.gamemaster).toBeInstanceOf(Player);
       expect(game.gamemaster.isGamemaster).toEqual(true);
       const gamemaster = new Player(GuildMemberMock, true);
-      expect(game.gamemaster).toMatchObject(gamemaster);
+      expect(game.gamemaster).toEqual(expect.objectContaining(gamemaster));
     });
 
     test('should not set gamemaster.', () => {
@@ -77,7 +78,7 @@ describe('Classes: Game', () => {
     test('first member of player list should be gamemaster.', () => {
       const game = new Game(GuildMemberMock);
       expect(game.players.length).toEqual(1);
-      expect(game.players[0]).toMatchObject(game.gamemaster);
+      expect(game.players[0]).toEqual(expect.objectContaining(game.gamemaster));
     });
 
     test('should not set player list.', () => {
@@ -103,13 +104,13 @@ describe('Classes: Game', () => {
 
     test('should get game guild.', () => {
       const game = new Game(GuildMemberMock);
-      expect(game.guild).toMatchObject(GuildMock);
+      expect(game.guild).toEqual(expect.objectContaining(GuildMock));
     });
 
     test('should not set game guild.', () => {
       const game = new Game(GuildMemberMock);
       game.guild = 'new guild';
-      expect(game.guild).toMatchObject(GuildMock);
+      expect(game.guild).toEqual(expect.objectContaining(GuildMock));
       expect(game.guild).not.toBeInstanceOf(String);
       expect(game.guild).toBeInstanceOf(Object);
     });
@@ -512,7 +513,7 @@ describe('Classes: Game', () => {
         const game = new Game(gamemaster);
         const foundGamemasterObject = game._findPlayerByName(gamemaster.displayName);
         expect(foundGamemasterObject.playerIndex).toBeGreaterThan(-1); // a -1 or lower means the player was not found.
-        expect(foundGamemasterObject.player).toMatchObject(game.gamemaster);
+        expect(foundGamemasterObject.player).toEqual(expect.objectContaining(game.gamemaster));
       });
     });
 
@@ -522,7 +523,7 @@ describe('Classes: Game', () => {
         const game = new Game(gamemaster);
         const foundGamemasterObject = game._findPlayerById(gamemaster.id);
         expect(foundGamemasterObject.playerIndex).toBeGreaterThan(-1);
-        expect(foundGamemasterObject.player).toMatchObject(game.gamemaster);
+        expect(foundGamemasterObject.player).toEqual(expect.objectContaining(game.gamemaster));
       });
     });
 

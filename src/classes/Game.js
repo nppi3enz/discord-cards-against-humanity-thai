@@ -8,6 +8,8 @@ class Game extends EventEmitter {
   constructor(initialMember) {
     super();
 
+    initialMember.guild.game = this;
+    initialMember.user.game = this;
     const initialPlayer = new Player(initialMember, true);
 
     this._gamemaster = initialPlayer;
@@ -52,6 +54,7 @@ class Game extends EventEmitter {
     We still need to define how these guild settings are saved. */
     this._validateBeforeAddingPlayer();
 
+    newMember.user.game = this;
     const newPlayer = new Player(newMember);
 
     if (this._isPlayerInList(newPlayer)) {
@@ -80,7 +83,6 @@ class Game extends EventEmitter {
     const kickedPlayer = this._removePlayerFromGame(player, playerIndex);
 
     if (kickedPlayer) {
-      kickedPlayer.member.user.game = null;
       kickedPlayer.member.send('You have been kicked from the game!');
     }
 
@@ -148,6 +150,7 @@ class Game extends EventEmitter {
     }
 
     const [removedPlayer] = this._players.splice(index, 1);
+    removedPlayer.member.user.game = null;
 
     if (this._status === GAME_STATUS.playing && this._players.length < 3) {
       return this._endAbruptly();
