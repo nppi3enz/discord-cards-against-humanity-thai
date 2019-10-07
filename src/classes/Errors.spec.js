@@ -2,8 +2,13 @@ const { GameError, GamePlayersError, GameStatusError, PlayerError, GameRequireme
 
 describe('Classes: Errors', () => {
   describe('Classes: PlayerError', () => {
+    let error;
+
+    beforeEach(() => {
+      error = new PlayerError();
+    });
+
     test('should create a PlayerError instance.', () => {
-      const error = new PlayerError();
       expect(error).toBeInstanceOf(PlayerError);
     });
 
@@ -16,14 +21,18 @@ describe('Classes: Errors', () => {
     });
 
     test('should contain a name equal to PlayerError.', () => {
-      const error = new PlayerError();
       expect(error.name).toBe('PlayerError');
     });
   });
 
   describe('Classes: GameError', () => {
+    let error;
+
+    beforeEach(() => {
+      error = new GameError();
+    });
+
     test('should create a GameError instance.', () => {
-      const error = new GameError();
       expect(error).toBeInstanceOf(GameError);
     });
 
@@ -36,14 +45,18 @@ describe('Classes: Errors', () => {
     });
 
     test('should contain a name equal to GameError.', () => {
-      const error = new GameError();
       expect(error.name).toBe('GameError');
     });
   });
 
   describe('Classes: GamePlayersError', () => {
+    let error;
+
+    beforeEach(() => {
+      error = new GamePlayersError();
+    });
+
     test('should create a GamePlayersError instance.', () => {
-      const error = new GamePlayersError();
       expect(error).toBeInstanceOf(GamePlayersError);
     });
 
@@ -56,14 +69,18 @@ describe('Classes: Errors', () => {
     });
 
     test('should contain a name equal to GameError.', () => {
-      const error = new GamePlayersError();
       expect(error.name).toBe('GamePlayersError');
     });
   });
 
   describe('Classes: GameStatusError', () => {
+    let error;
+
+    beforeEach(() => {
+      error = new GameStatusError();
+    });
+
     test('should create a GameStatusError instance.', () => {
-      const error = new GameStatusError();
       expect(error).toBeInstanceOf(GameStatusError);
     });
 
@@ -76,14 +93,18 @@ describe('Classes: Errors', () => {
     });
 
     test('should contain a name equal to GameStatusError.', () => {
-      const error = new GameStatusError();
       expect(error.name).toBe('GameStatusError');
     });
   });
 
   describe('Classes: GameRequirementsError', () => {
+    let error;
+
+    beforeEach(() => {
+      error = new GameRequirementsError();
+    });
+
     test('should create a GameRequirementsError instance.', () => {
-      const error = new GameRequirementsError();
       expect(error).toBeInstanceOf(GameRequirementsError);
     });
 
@@ -96,7 +117,6 @@ describe('Classes: Errors', () => {
     });
 
     test('should contain a name equal to GameRequirementsError.', () => {
-      const error = new GameRequirementsError();
       expect(error.name).toBe('GameRequirementsError');
     });
   });

@@ -1,11 +1,11 @@
 /**
  * Updates the presence of the Discord bot.
- * @param {Discord.Client} client The Discord client to update the presence.
- * @returns {void}
+ * @param {Client} client The Discord client to update the presence.
+ * @returns {Promise}
  */
 const updatePresence = (client) => {
   const presence = `${client.guilds.size} servers!`;
-  client.user.setPresence({
+  return client.user.setPresence({
     activity: {
       name: presence,
       type: 'PLAYING'

@@ -3,8 +3,8 @@ const { GAME_STATUS } = require('../../common/constants');
 /**
  * Validates the command run by an user and returns an object containing the required information
  * that the bot needs to run the actual command.
- * @param {Discord.Client} client The client instance of the bot.
- * @param {Discord.Message} message The message object that triggered this method.
+ * @param {Client} client The client instance of the bot.
+ * @param {Message} message The message object that triggered this method.
  * @param {String} command The name of the command being run.
  * @returns {Object} The object containing the validated info on the command.
  */
@@ -48,11 +48,7 @@ const validateRequiredGameStatus = (game, command) => {
     return true;
   }
 
-  if (!game || (game.status !== requiredGameStatus && requiredGameStatus !== GAME_STATUS.any)) {
-    return false;
-  }
-
-  return true;
+  return !(!game || (game.status !== requiredGameStatus && requiredGameStatus !== GAME_STATUS.any));
 };
 
 /**
@@ -74,8 +70,8 @@ const validateGamemasterOnly = (game, command, authorId) => {
 
 /**
  * Executes the specified command.
- * @param {Discord.Client} client The client instance of the bot.
- * @param {Discord.Message} message The message object that triggered this method.
+ * @param {Client} client The client instance of the bot.
+ * @param {Message} message The message object that triggered this method.
  * @param {Object} options The object containing the data that the command may need.
  * @param {String} commandName The name of the command being run.
  * @returns {void}

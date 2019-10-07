@@ -1,27 +1,7 @@
 const { splitForMessageEmbedField, parseArgs, parseChannelMention } = require('.');
 const { MAX_EMBED_FIELD_SIZE } = require('../../common/constants');
-
-const voiceChannelMock = {
-  id: '123',
-  type: 'voice',
-  viewable: true,
-  joinable: false
-};
-
-const textChannelMock = {
-  id: '234',
-  type: 'text',
-  viewable: false
-};
-
-const messageMock = {
-  guild: {
-    channels: [
-      textChannelMock,
-      voiceChannelMock
-    ]
-  }
-};
+const createChannelMock = require('../../../__mocks__/channelMock');
+const { guildMessageMock } = require('../../../__mocks__/messageMock');
 
 describe('Utils: Common', () => {
   describe('splitForMessageEmbedField()', () => {
@@ -102,55 +82,48 @@ describe('Utils: Common', () => {
   });
 
   describe('parseChannelMention()', () => {
+    const voiceChannelMock = createChannelMock('voice');
+    const textChannelMock = createChannelMock('text');
+    guildMessageMock.guild.channels.push(voiceChannelMock, textChannelMock);
+
     test('should return an object with at least an "exists" property.', () => {
-      const actualResult = parseChannelMention(messageMock);
+      const actualResult = parseChannelMention(guildMessageMock);
       expect(actualResult).toBeInstanceOf(Object);
       expect(actualResult).toHaveProperty('exists');
       expect(typeof actualResult.exists).toBe('boolean');
     });
 
     test('should return a false exists property if channelString has no numbers.', () => {
-      const actualResult = parseChannelMention(messageMock, 'aslkjasl', () => {
-        expect(actualResult.exists).toBe(false);
-      });
-    });
-
-    test('should return a false exists property if channel is not found.', () => {
-      const fakeChannelId = '62816382';
-      const actualResult = parseChannelMention(messageMock, fakeChannelId);
+      const actualResult = parseChannelMention(guildMessageMock, 'no numbers');
       expect(actualResult.exists).toBe(false);
     });
 
-    test('should return an object with the channel info if found.', () => {
-      const voiceChannelId = '123';
-      const actualResult = parseChannelMention(messageMock, voiceChannelId);
-      expect(actualResult).toBeInstanceOf(Object);
-      expect(actualResult).toHaveProperty('exists', true);
-      expect(actualResult).toHaveProperty('type', voiceChannelMock.type);
-      expect(actualResult).toHaveProperty('viewable', voiceChannelMock.viewable);
-      expect(actualResult).toHaveProperty('joinable', voiceChannelMock.joinable);
-      expect(actualResult).toHaveProperty('channel', voiceChannelMock);
+    test('should return a false exists property if channel is not found.', () => {
+      const fakeChannelId = '123';
+      const actualResult = parseChannelMention(guildMessageMock, fakeChannelId);
+      expect(actualResult.exists).toBe(false);
     });
 
     test('should return an object with a null joinable property if channel is of type text.', () => {
-      const textChannelId = '234';
-      const actualResult = parseChannelMention(messageMock, textChannelId);
+      const { id, type, viewable } = textChannelMock;
+      const actualResult = parseChannelMention(guildMessageMock, id);
       expect(actualResult).toBeInstanceOf(Object);
       expect(actualResult).toHaveProperty('exists', true);
-      expect(actualResult).toHaveProperty('type', textChannelMock.type);
-      expect(actualResult).toHaveProperty('viewable', textChannelMock.viewable);
+      expect(actualResult).toHaveProperty('type', type);
+      expect(actualResult).toHaveProperty('viewable', viewable);
       expect(actualResult).toHaveProperty('joinable', null);
       expect(actualResult).toHaveProperty('channel', textChannelMock);
     });
 
     test('should return the proper channel info object if the id is surrounded by other characters.', () => {
-      const voiceChannelId = '<@123>'; // The stringified mention looks a bit like this.
-      const actualResult = parseChannelMention(messageMock, voiceChannelId);
+      const { id, type, viewable, joinable } = voiceChannelMock;
+      const stringifiedMention = `<@${id}>`; // The stringified mention looks a bit like this.
+      const actualResult = parseChannelMention(guildMessageMock, stringifiedMention);
       expect(actualResult).toBeInstanceOf(Object);
       expect(actualResult).toHaveProperty('exists', true);
-      expect(actualResult).toHaveProperty('type', voiceChannelMock.type);
-      expect(actualResult).toHaveProperty('viewable', voiceChannelMock.viewable);
-      expect(actualResult).toHaveProperty('joinable', voiceChannelMock.joinable);
+      expect(actualResult).toHaveProperty('type', type);
+      expect(actualResult).toHaveProperty('viewable', viewable);
+      expect(actualResult).toHaveProperty('joinable', joinable);
       expect(actualResult).toHaveProperty('channel', voiceChannelMock);
     });
   });

@@ -1,69 +1,62 @@
 const Player = require('./Player.js');
-
-const GuildMemberMock = {
-  displayName: 'moonstar-x',
-  id: 69
-};
+const { createGuildMemberMock } = require('../../__mocks__/guildMemberMock');
 
 describe('Classes: Player', () => {
+  let player;
+  let member;
+
+  beforeEach(() => {
+    member = createGuildMemberMock();
+    player = new Player(member);
+  });
+
   test('should create a player instance.', () => {
-    const player = new Player(GuildMemberMock);
     expect(player).toBeInstanceOf(Player);
   });
 
   describe('Getters and Setters:', () => {
     test('should get name.', () => {
-      const player = new Player(GuildMemberMock);
-      expect(player.name).toEqual(GuildMemberMock.displayName);
+      expect(player.name).toEqual(member.displayName);
     });
 
     test('should get id.', () => {
-      const player = new Player(GuildMemberMock);
-      expect(player.id).toEqual(GuildMemberMock.id);
+      expect(player.id).toEqual(member.id);
     });
 
     test('should get member.', () => {
-      const player = new Player(GuildMemberMock);
-      expect(player.member).toMatchObject(GuildMemberMock);
+      expect(player.member).toMatchObject(member);
     });
 
     test('should get gamemaster.', () => {
-      const gamemaster = new Player(GuildMemberMock, true);
-      const regularPlayer = new Player(GuildMemberMock);
+      const gamemaster = new Player(createGuildMemberMock(), true);
+      const regularPlayer = new Player(createGuildMemberMock());
       expect(gamemaster.isGamemaster).toEqual(true);
       expect(regularPlayer.isGamemaster).toEqual(false);
     });
 
     test('should get score.', () => {
-      const player = new Player(GuildMemberMock);
       expect(player.score).toEqual(0);
     });
 
     test('should not set name.', () => {
-      const player = new Player(GuildMemberMock);
-      player.name = 'minibambu';
-      expect(player.name).toEqual(GuildMemberMock.displayName);
+      player.name = 'new player name';
+      expect(player.name).toEqual(member.displayName);
     });
 
     test('should not set id.', () => {
-      const player = new Player(GuildMemberMock);
       player.id = 100;
-      expect(player.id).toEqual(GuildMemberMock.id);
+      expect(player.id).toEqual(member.id);
     });
 
     test('should not set member.', () => {
-      const player = new Player(GuildMemberMock);
-      const GuildMemberMockTwo = {
-        displayName: 'RestInPizzeria',
-        id: 22
-      };
-      player.member = GuildMemberMockTwo;
-      expect(player.member).toMatchObject(GuildMemberMock);
+      player.member = createGuildMemberMock();
+      expect(player.member).toMatchObject(member);
+      expect(player.id).toBe(member.id);
     });
 
     test('should set gamemaster.', () => {
-      const gamemaster = new Player(GuildMemberMock, true);
-      const regularPlayer = new Player(GuildMemberMock);
+      const gamemaster = new Player(createGuildMemberMock(), true);
+      const regularPlayer = new Player(createGuildMemberMock());
       gamemaster.isGamemaster = false;
       regularPlayer.isGamemaster = true;
       expect(gamemaster.isGamemaster).toEqual(false);
@@ -71,7 +64,7 @@ describe('Classes: Player', () => {
     });
 
     test('should not set gamemaster if value is not boolean.', () => {
-      const gamemaster = new Player(GuildMemberMock, true);
+      const gamemaster = new Player(createGuildMemberMock(), true);
       gamemaster.isGamemaster = 22;
       expect(gamemaster.isGamemaster).toEqual(true);
       gamemaster.isGamemaster = '22';
@@ -79,7 +72,6 @@ describe('Classes: Player', () => {
     });
 
     test('should not set score.', () => {
-      const player = new Player(GuildMemberMock);
       player.score = 22;
       expect(player.score).toEqual(0);
     });
@@ -88,9 +80,14 @@ describe('Classes: Player', () => {
   describe('Public Methods:', () => {
     describe('incrementScore()', () => {
       test('should increment score by 1.', () => {
-        const player = new Player(GuildMemberMock);
-        const score = player.incrementScore();
-        expect(score).toEqual(player.score);
+        expect(player.score).toEqual(0);
+        player.incrementScore();
+        expect(player.score).toEqual(1);
+      });
+
+      test('should return new score.', () => {
+        const newScore = player.incrementScore();
+        expect(newScore).toBe(1);
       });
     });
   });

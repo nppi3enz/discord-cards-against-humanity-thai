@@ -8,9 +8,8 @@ class Player {
   }
 
   incrementScore() {
-    const newScore = this._score++;
-    this._score = newScore;
-    return newScore;
+    this._score++;
+    return this._score;
   }
 
   set isGamemaster(newValue) {

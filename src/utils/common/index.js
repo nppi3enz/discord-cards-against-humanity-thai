@@ -57,7 +57,7 @@ const parseArgs = (args = []) => {
 /**
  * Parses a Channel string received from message mention and returns an object containing the respective
  * Channel object and other data about the channel.
- * @param {Discord.Message} message The message object that triggered the command.
+ * @param {Message} message The message object that triggered the command.
  * @param {String} channelString The string of the channel mention.
  * @returns {Object} The object containing the corresponding Channel object and other information.
  */
