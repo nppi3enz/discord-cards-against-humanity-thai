@@ -2,12 +2,13 @@ const { updatePresence } = require('../../common/functions');
 const utils = require('../../utils');
 const { prefix } = getConfig();
 
-const handleReady = (client) => {
+const handleReady = (mongo) => {
   logger.info('Connected to Discord! - Ready.');
-  updatePresence(client);
+  updatePresence(mongo.client);
+  mongo.initializeMongo();
 };
 
-const handleMessage = (message, client) => {
+const handleMessage = (message, mongo) => {
   if (!message.content.startsWith(prefix) || message.author.bot) {
     return;
   }
@@ -17,18 +18,20 @@ const handleMessage = (message, client) => {
 
   const options = {
     args,
-    commands: client.commands
+    commands: mongo.client.commands
   };
 
-  utils.commands.executeCommand(client, message, options, command);
+  utils.commands.executeCommand(mongo.client, message, options, command);
 };
 
-const handleGuildCreate = (guild) => {
+const handleGuildCreate = (guild, mongo) => {
   logger.info(`Joined ${guild.name} guild!`);
+  mongo.createGuild(guild);
 };
 
-const handleGuildDelete = (guild) => {
+const handleGuildDelete = (guild, mongo) => {
   logger.info(`Left ${guild.name} guild!`);
+  mongo.deleteGuild(guild);
 };
 
 const handleGuildUnavailable = (guild) => {

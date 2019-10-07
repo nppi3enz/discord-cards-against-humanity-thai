@@ -32,9 +32,9 @@
   "dependencies": {
     "axios": "^0.19.0",
     "discord.js": "github:discordjs/discord.js",
-    "events": "^3.0.0",
     "fs-extra": "^8.1.0",
     "logger": "github:moonstar-x/logger",
+    "mongoose": "^5.7.1",
     "node-opus": "^0.3.2"
   },
   "devDependencies": {
@@ -48,5 +48,8 @@
     "jest": "^24.8.0",
     "nodemon": "^1.19.1",
     "sinon": "^7.3.2"
+  },
+  "engines": {
+    "node": "11.x"
   }
 }

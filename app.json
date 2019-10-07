@@ -1,5 +1,18 @@
 {
   "name": "Cards Against Humanity for Discord",
   "description": "A concept game of Cards Against Humanity with a Discord client.",
-  "repository": "https://github.com/greencoast-studios/discord-cards-against-humanity"
+  "repository": "https://github.com/greencoast-studios/discord-cards-against-humanity",
+  "logo": "https://static.thenounproject.com/png/30134-200.png",
+  "env": {
+    "PREFIX": {
+      "description": "Your bot's command prefix.",
+      "value": "x!",
+      "required": true
+    },
+    "DISCORD_TOKEN": {
+      "description": "Your bot's bot token.",
+      "required": true
+    }
+  },
+  "addons": ["mongolab"]
 }

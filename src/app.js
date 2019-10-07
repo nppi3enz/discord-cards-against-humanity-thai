@@ -1,6 +1,7 @@
 require('./common/globals');
 const { Client, Collection, Structures } = require('discord.js');
 const { GameGuild, GameUser } = require('./classes/extensions');
+const Mongo = require('./classes/Mongo');
 const fs = require('fs-extra');
 const path = require('path');
 const appHandlers = require('./events/handlers/app');
@@ -11,6 +12,7 @@ Structures.extend('Guild', GameGuild);
 Structures.extend('User', GameUser);
 
 const client = new Client();
+const mongo = new Mongo(client);
 client.commands = {};
 
 function loadCommands(type) {
@@ -26,10 +28,10 @@ for (const type of constants.COMMAND_TYPES) {
   loadCommands(type);
 }
 
-client.on('ready', () => appHandlers.handleReady(client));
-client.on('message', message => appHandlers.handleMessage(message, client));
-client.on('guildCreate', guild => appHandlers.handleGuildCreate(guild));
-client.on('guildDelete', guild => appHandlers.handleGuildDelete(guild));
+client.on('ready', () => appHandlers.handleReady(mongo));
+client.on('message', message => appHandlers.handleMessage(message, mongo));
+client.on('guildCreate', guild => appHandlers.handleGuildCreate(guild, mongo));
+client.on('guildDelete', guild => appHandlers.handleGuildDelete(guild, mongo));
 client.on('guildUnavailable', guild => appHandlers.handleGuildUnavailable(guild));
 client.on('warn', info => appHandlers.handleWarn(info));
 client.on('invalidated', appHandlers.handleInvalidated);

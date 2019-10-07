@@ -36,15 +36,6 @@ You can deploy this bot to Heroku by clicking the following image:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/greencoast-studios/discord-cards-against-humanity)
 
-You'll then need to add the config vars for your bot, head over to your app's *Dashboard*, click on *Settings* and *Reveal Config Vars*. You'll need to add the following vars with their respective values.
-
-| CONFIG VAR    | VALUE                        |
-|---------------|------------------------------|
-| PREFIX        | YOUR PREFIX HERE.            |
-| DISCORD_TOKEN | YOUR DISCORD BOT TOKEN HERE. |
-
-*Copy the config var exactly as it is and only change the values.*
-
 You can now go back to your app's *Overview*, make sure you disable the *web* dyno and enable the *bot* dyno. Your bot should now be up and running. Remember you can always check your bot's console if you access the *View Logs* in the *More* dropdown menu.
 
 ## Usage

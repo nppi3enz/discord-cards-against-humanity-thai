@@ -41,6 +41,10 @@ const PLAYER_EMOJIS = [
   ':man_with_gua_pi_mao:'
 ];
 
+const MONGO_ERROR_CODES = {
+  duplicate: 11000
+};
+
 module.exports = {
   COMMAND_TYPES,
   MAX_EMBED_FIELD_SIZE,
@@ -49,5 +53,6 @@ module.exports = {
   EXPANSION_PACK_TYPES,
   GAME_STATUS,
   POSITION_EMOJIS,
-  PLAYER_EMOJIS
+  PLAYER_EMOJIS,
+  MONGO_ERROR_CODES
 };
